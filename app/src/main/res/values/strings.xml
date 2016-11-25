@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">GoalsMadeAttainable</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_register">Register</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+
+    <!-- Strings related to registration -->
+    <string name="first_name_hint">Enter your first name</string>
+    <string name="last_name_hint">Enter your last name</string>
+    <string name="email_hint">Enter your email</string>
+    <string name="username_hint">Enter your username</string>
+    <string name="password_hint">Enter your password</string>
+    <string name="reenter_password_hint">Reenter your password</string>
+    <string name="empty_first_name">Please provide a first name</string>
+    <string name="empty_last_name">Please provide a last name</string>
+    <string name="invalid_email">Please provide a valid email</string>
+    <string name="empty_username">Please provide a username</string>
+    <string name="non_unique_username">Username taken please provide another</string>
+    <string name="empty_password">Please provide a password</string>
+    <string name="empty_reenter_password">Please retype your password</string>
+    <string name="invalid_password">Password do not match</string>
+    <string name="submit_registraion_button">Submit</string>
+</resources>
