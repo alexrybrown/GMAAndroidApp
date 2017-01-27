@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class HttpURLConnectionHandler {
     public enum Method {GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE}
-    public static final String ROOT_URL = "http://146.86.234.51:8000/";
+    public static final String ROOT_URL = "https://arcane-fjord-64904.herokuapp.com/";
     private String apiEndpoint;
     private Method method;
     private HashMap<String, String> params;
@@ -119,9 +119,9 @@ public class HttpURLConnectionHandler {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(15000);
                 conn.setConnectTimeout(15000);
-                conn.setRequestMethod(method.name());
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
+                conn.setRequestMethod(method.name());
 
                 // If we have params send them to the server
                 if(params != null) {

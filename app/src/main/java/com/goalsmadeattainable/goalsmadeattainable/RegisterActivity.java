@@ -88,31 +88,10 @@ public class RegisterActivity extends AppCompatActivity {
             params.put("password", password);
             params.put("confirm_password", reenterPassword);
             HttpURLConnectionHandler handler = new HttpURLConnectionHandler(
-                    "register", HttpURLConnectionHandler.Method.POST, params);
+                    "register/", HttpURLConnectionHandler.Method.POST, params);
             String response = handler.execute();
             System.out.println(response);
-            // Create user and store in db
-//            User newUser = new User(0, firstName, lastName, email, username, password);
-//            DBTools dbTools = null;
-//
-//            try {
-//                dbTools = new DBTools(this);
-//                newUser = dbTools.createUser(newUser);
-//            } catch (SQLiteConstraintException e) {
-//                mUsernameView.setError(getString(R.string.non_unique_username));
-//                focusView = mUsernameView;
-//                cancel = true;
-//            } finally {
-//                if (dbTools != null) {
-//                    dbTools.close();
-//                }
-//            }
-        }
-        if (cancel) {
-            focusView.requestFocus();
-        } else {
-            // Pass user on to next activity
-            startActivity(intent);
+            // Pass user on to the next activity
         }
     }
 
