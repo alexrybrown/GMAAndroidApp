@@ -2,17 +2,19 @@
     <string name="app_name">GoalsMadeAttainable</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
+    <string name="prompt_user">Username</string>
+    <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_register">Register</string>
     <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_invalid_password">A password is required</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+        completions."</string>
+    <string name="login_url">api-token-auth/</string>
+    <string name="failed_to_login">Failed to login.</string>
+    <string name="login_successful">Login successful.</string>
 
     <!-- Strings related to registration -->
     <string name="first_name_hint">Enter your first name</string>
@@ -28,6 +30,15 @@
     <string name="non_unique_username">Username taken please provide another</string>
     <string name="empty_password">Please provide a password</string>
     <string name="empty_reenter_password">Please retype your password</string>
-    <string name="invalid_password">Password do not match</string>
+    <string name="invalid_password">Passwords do not match</string>
     <string name="submit_registraion_button">Submit</string>
+    <string name="register_url">register/</string>
+    <string name="failed_to_register">Registration failed.</string>
+    <string name="registration_successful">Registration successful.</string>
+    <string name="first_name">first_name</string>
+    <string name="last_name">last_name</string>
+    <string name="email">email</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="confirm_password">confirm_password</string>
 </resources>
