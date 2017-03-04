@@ -1,8 +1,6 @@
 package com.goalsmadeattainable.goalsmadeattainable;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteConstraintException;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,8 +12,6 @@ import java.util.HashMap;
 import utils.HttpURLConnectionHandler;
 import utils.RegisterURLConnectionHandler;
 
-//import com.example.alex.planningmadeeasy.utils.DBTools;
-//import com.example.alex.planningmadeeasy.utils.User;
 
 public class RegisterActivity extends AppCompatActivity {
     @Override

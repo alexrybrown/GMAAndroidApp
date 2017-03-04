@@ -13,8 +13,16 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."</string>
     <string name="login_url">api-token-auth/</string>
+    <string name="user_info_url">accounts/</string>
+    <string name="user_token_info">/info/</string>
     <string name="failed_to_login">Failed to login.</string>
     <string name="login_successful">Login successful.</string>
+    <string name="user_id">id</string>
+    <string name="user_first_name">first_name</string>
+    <string name="user_last_name">last_name</string>
+    <string name="user_username">username</string>
+    <string name="user_email">email</string>
+    <string name="user_token">token</string>
 
     <!-- Strings related to registration -->
     <string name="first_name_hint">Enter your first name</string>
@@ -32,7 +40,7 @@
     <string name="empty_reenter_password">Please retype your password</string>
     <string name="invalid_password">Passwords do not match</string>
     <string name="submit_registraion_button">Submit</string>
-    <string name="register_url">register/</string>
+    <string name="register_url">accounts/</string>
     <string name="failed_to_register">Registration failed.</string>
     <string name="registration_successful">Registration successful.</string>
     <string name="first_name">first_name</string>
@@ -41,4 +49,13 @@
     <string name="username">username</string>
     <string name="password">password</string>
     <string name="confirm_password">confirm_password</string>
+
+    <!-- Strings related to goals -->
+    <string name="add_new_goal">Add New Goal</string>
+    <string name="enter_goal">Enter Primary Goal</string>
+    <string name="enter_sub_goal">Enter Sub Goal</string>
+    <string name="add_sub_goal">Add Sub Goal</string>
+    <string name="remove_sub_goal">Remove Sub Goal</string>
+    <string name="submit_goals">Submit Goals</string>
+    <string name="goal_submission_error">A goal must have a value</string>
 </resources>

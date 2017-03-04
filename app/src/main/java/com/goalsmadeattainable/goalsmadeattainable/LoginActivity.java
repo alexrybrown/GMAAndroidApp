@@ -1,9 +1,6 @@
 package com.goalsmadeattainable.goalsmadeattainable;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -15,7 +12,6 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -31,14 +27,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import utils.DBTools;
 import utils.LoginURLConnectionHandler;
-import utils.User;
 import utils.HttpURLConnectionHandler;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -52,15 +46,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
-    // User identifier between activities
-    public static final String USER = "com.goalsmadeattainable.goalsmadeattainable.USER";
 
     // UI references.
     private AutoCompleteTextView mUsernameView;
     private EditText mPasswordView;
-
-    // Helper varibales
-    private User myUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +142,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         DBTools dbTools = new DBTools(this);
         if (!dbTools.getToken().isEmpty()) {
             dbTools.close();
-            return;
+            Intent intent = new Intent(this, this.getClass());
+            startActivity(intent);
         }
         dbTools.close();
 
@@ -169,7 +159,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password)) {
+        if (TextUtils.isEmpty(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -187,10 +177,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // form field with an error.
             focusView.requestFocus();
         } else {
+            // Setup our params for login
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put(getString(R.string.username), username);
+            params.put(getString(R.string.password), password);
+            Intent intent = new Intent(this, this.getClass());
             LoginURLConnectionHandler handler = new LoginURLConnectionHandler(
                     getString(R.string.login_url), getString(R.string.login_successful),
                     getString(R.string.failed_to_login), HttpURLConnectionHandler.Method.POST,
                     params, this, intent);
+            handler.execute((Void) null);
         }
     }
 

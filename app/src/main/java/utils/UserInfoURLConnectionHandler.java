@@ -2,7 +2,6 @@ package utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
 
 import com.goalsmadeattainable.goalsmadeattainable.R;
 
@@ -15,9 +14,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 
-public class LoginURLConnectionHandler extends HttpURLConnectionHandler {
-    public LoginURLConnectionHandler(String apiEndpoint, String success, String failure, Method method,
-                                     HashMap<String, String> params, Context context, Intent intent) {
+public class UserInfoURLConnectionHandler extends HttpURLConnectionHandler {
+    public UserInfoURLConnectionHandler(String apiEndpoint, String success, String failure, Method method,
+                                        HashMap<String, String> params, Context context, Intent intent) {
         super(apiEndpoint, success, failure, method, params, context, intent);
     }
 
@@ -41,7 +40,19 @@ public class LoginURLConnectionHandler extends HttpURLConnectionHandler {
             // Create a JSONObject to get our data
             try {
                 JSONObject json = new JSONObject(sb.toString());
-                this.token = json.getString(context.getString(R.string.user_token));
+                DBTools dbTools = new DBTools(context);
+                // Create the user if they don't exist in the database
+                if (!dbTools.checkUserExists(token)) {
+                    User user = new User();
+                    user.userID = json.getInt(context.getString(R.string.user_id));
+                    user.firstName = json.getString(context.getString(R.string.user_first_name));
+                    user.lastName = json.getString(context.getString(R.string.user_last_name));
+                    user.username = json.getString(context.getString(R.string.user_username));
+                    user.email = json.getString(context.getString(R.string.user_email));
+                    user.token = token;
+                    dbTools.createUser(user);
+                }
+                dbTools.close();
                 return success;
             } catch (JSONException e) {
                 System.err.print(e.getMessage());
@@ -51,19 +62,6 @@ public class LoginURLConnectionHandler extends HttpURLConnectionHandler {
             return success;
         } else {
             return failure;
-        }
-    }
-
-    @Override
-    protected void onPostExecute(String result) {
-        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
-        if(!result.equals(failure)) {
-            UserInfoURLConnectionHandler handler = new UserInfoURLConnectionHandler(
-                    context.getString(R.string.user_info_url) + token + context.getString(R.string.user_token_info),
-                    success, failure,
-                    HttpURLConnectionHandler.Method.GET, null, context, intent);
-            handler.setToken(token);
-            handler.execute((Void) null);
         }
     }
 }

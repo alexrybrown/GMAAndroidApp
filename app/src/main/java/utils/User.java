@@ -1,23 +1,21 @@
 package utils;
 
-/**
- * Created by alex on 2/4/17.
- */
-
 public class User {
-    public long userID;
+    public int userID;
     public String firstName;
     public String lastName;
     public String username;
     public String email;
-    public String password;
+    public String token;
 
-    public User(long userID, String firstName, String lastName, String username, String email, String password) {
+    public User(int userID, String firstName, String lastName, String email, String username, String token) {
         this.userID = userID;
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.email = email;
-        this.password = password;
+        this.token = token;
     }
+
+    public User() {}
 }

@@ -1,13 +1,8 @@
 package utils;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.view.View;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -28,7 +23,7 @@ import java.util.Map;
  */
 public abstract class HttpURLConnectionHandler extends AsyncTask<Void, Void, String> {
     public enum Method {GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE}
-    protected static final String ROOT_URL = "https://arcane-fjord-64904.herokuapp.com/";
+    protected String rootUrl;
     protected String apiEndpoint;
     protected Method method;
     protected HashMap<String, String> params;
@@ -37,6 +32,7 @@ public abstract class HttpURLConnectionHandler extends AsyncTask<Void, Void, Str
     protected Intent intent;
     protected String success;
     protected String failure;
+    protected String token = "";
 
     /**
      * Sets up the needed information to use the handler
@@ -56,23 +52,36 @@ public abstract class HttpURLConnectionHandler extends AsyncTask<Void, Void, Str
         this.intent = intent;
         this.success = success;
         this.failure = failure;
+        try {
+            // Get local url when developing
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(context.getResources().getAssets().open("url.txt")));
+            this.rootUrl = br.readLine();
+        } catch (Exception e) {
+            // Get production url on server
+            this.rootUrl = "https://arcane-fjord-64904.herokuapp.com/";
+        }
     }
 
     // Starts the communication process with the server
     protected String doInBackground(Void... params) {
         try {
-            URL url = new URL(ROOT_URL + apiEndpoint);
+            URL url = new URL(rootUrl + apiEndpoint);
 
             // Set the basics of the connection up
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(15000);
             conn.setConnectTimeout(15000);
             conn.setDoInput(true);
-            conn.setDoOutput(true);
             conn.setRequestMethod(method.name());
+            // Check to see if we have a token
+            if (!token.isEmpty()) {
+                conn.setRequestProperty("Authorization", "Token " + this.token);
+            }
 
             // If we have params send them to the server
-            if(params != null) {
+            if(this.params != null) {
+                conn.setDoOutput(true);
                 OutputStream os = conn.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
                 writer.write(getParamsString());
@@ -100,6 +109,20 @@ public abstract class HttpURLConnectionHandler extends AsyncTask<Void, Void, Str
     }
 
     /**
+     * Default method of handling a response.
+     * @param conn is the http connection
+     * @return a string that is used in the post execute.
+     * @throws IOException
+     */
+    protected String handleResponse(HttpURLConnection conn) throws IOException {
+        if(responseCode >= 200 && responseCode < 300) {
+            return success;
+        } else {
+            return failure;
+        }
+    }
+
+    /**
      * Changes the hash map of params into a string representation
      * @return string representation of the params
      */
@@ -121,26 +144,10 @@ public abstract class HttpURLConnectionHandler extends AsyncTask<Void, Void, Str
     }
 
     /**
-     * Default method of handling a response.
-     * @param conn is the http connection
-     * @return a string that is used in the post execute.
-     * @throws IOException
+     * Sets the token
+     * @param token to be set in class
      */
-    protected String handleResponse(HttpURLConnection conn) throws IOException {
-        if(responseCode == HttpURLConnection.HTTP_OK) {
-            StringBuffer sb = new StringBuffer("Success");
-            String line;
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
-            while((line=br.readLine()) != null) {
-                sb.append(line);
-            }
-            br.close();
-            return sb.toString();
-        } else if(responseCode >= 200 && responseCode < 300) {
-            return success;
-        } else {
-            return failure;
-        }
+    public void setToken(String token) {
+        this.token = token;
     }
 }
