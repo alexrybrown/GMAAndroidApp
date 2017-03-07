@@ -57,9 +57,11 @@ public class DBTools extends SQLiteOpenHelper {
 
     // Create setup for user having goals in database
     private static final String USER_HAS_GOALS_TABLE = "user_has_goals";
+    private static final String USER_HAS_GOALS_COLUMN_USER_ID = "user_id";
+    private static final String USER_HAS_GOALS_COLUMN_GOAL_ID = "goal_id";
     private static final String USER_HAS_GOALS_TABLE_CREATE =
-            "CREATE TABLE " + USER_HAS_GOALS_TABLE + " (" + USER_COLUMN_ID + " INTEGER REFERENCES "
-                    + USER_TABLE + "(" + USER_COLUMN_ID + "), " + GOAL_COLUMN_ID
+            "CREATE TABLE " + USER_HAS_GOALS_TABLE + " (" + USER_HAS_GOALS_COLUMN_USER_ID + " INTEGER REFERENCES "
+                    + USER_TABLE + "(" + USER_COLUMN_ID + "), " + USER_HAS_GOALS_COLUMN_GOAL_ID
                     + " INTEGER REFERENCES " + GOAL_TABLE + "(" + GOAL_COLUMN_ID + "))";
 
     public DBTools(Context context) {
@@ -144,7 +146,7 @@ public class DBTools extends SQLiteOpenHelper {
     public String getToken() {
         SQLiteDatabase database = this.getReadableDatabase();
         // Get the active user out of the database
-        Cursor cursor = database.query(USER_TABLE, null, USER_COLUMN_ACTIVE + "=true",
+        Cursor cursor = database.query(USER_TABLE, null, USER_COLUMN_ACTIVE + "=1",
                                        null, null, null, null, null);
         // Move to the last row and get the value of the token
         cursor.moveToLast();

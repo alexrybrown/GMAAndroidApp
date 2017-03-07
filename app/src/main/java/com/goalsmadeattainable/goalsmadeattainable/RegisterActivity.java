@@ -1,10 +1,12 @@
 package com.goalsmadeattainable.goalsmadeattainable;
 
 import android.content.Intent;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import java.util.HashMap;
@@ -14,62 +16,125 @@ import utils.RegisterURLConnectionHandler;
 
 
 public class RegisterActivity extends AppCompatActivity {
+
+    private EditText firstNameEditText, lastNameEditText, emailEditText, usernameEditText,
+            passwordEditText, reenterPasswordEditText;
+    private TextInputLayout inputLayoutFirstName, inputLayoutLastName, inputLayoutEmail,
+            inputLayoutUsername, inputLayoutPassword, inputLayoutReenterPassword;
+    private Button submitButton, cancelButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        initializeWidgets();
+
+        initializeListeners();
+    }
+
+    private void initializeWidgets() {
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+
+        inputLayoutFirstName = (TextInputLayout) findViewById(R.id.inputLayoutFirstName);
+        inputLayoutLastName = (TextInputLayout) findViewById(R.id.inputLayoutLastName);
+        inputLayoutEmail = (TextInputLayout) findViewById(R.id.inputLayoutEmail);
+        inputLayoutUsername = (TextInputLayout) findViewById(R.id.inputLayoutUsername);
+        inputLayoutPassword = (TextInputLayout) findViewById(R.id.inputLayoutPassword);
+        inputLayoutReenterPassword = (TextInputLayout) findViewById(R.id.inputLayoutReenterPassword);
+
+        firstNameEditText = (EditText) findViewById(R.id.firstNameField);
+        lastNameEditText = (EditText) findViewById(R.id.lastNameField);
+        emailEditText = (EditText) findViewById(R.id.emailField);
+        usernameEditText = (EditText) findViewById(R.id.usernameField);
+        passwordEditText = (EditText) findViewById(R.id.passwordField);
+        reenterPasswordEditText = (EditText) findViewById(R.id.reenterPasswordField);
+
+        submitButton = (Button) findViewById(R.id.submit_button);
+        cancelButton = (Button) findViewById(R.id.cancel_button);
+    }
+
+    private void initializeListeners() {
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                register();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cancel();
+            }
+        });
     }
 
     /** Called when user clicks submit button **/
-    public void register(View view) {
-        // Get all of the views of our fields
-        EditText mFirstNameView = (EditText) findViewById(R.id.first_name);
-        EditText mLastNameView = (EditText) findViewById(R.id.last_name);
-        EditText mEmailView = (EditText) findViewById(R.id.email);
-        EditText mUsernameView = (EditText) findViewById(R.id.username);
-        EditText mPasswordView = (EditText) findViewById(R.id.password);
-        EditText mReenterPasswordView = (EditText) findViewById(R.id.reenter_password);
+    public void register() {
         // Get the String values to create the user
-        String firstName = mFirstNameView.getText().toString();
-        String lastName = mLastNameView.getText().toString();
-        String email = mEmailView.getText().toString();
-        String username = mUsernameView.getText().toString();
-        String password = mPasswordView.getText().toString();
-        String reenterPassword = mReenterPasswordView.getText().toString();
+        String firstName = firstNameEditText.getText().toString();
+        String lastName = lastNameEditText.getText().toString();
+        String email = emailEditText.getText().toString();
+        String username = usernameEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
+        String reenterPassword = reenterPasswordEditText.getText().toString();
         // Check to make sure everything is valid
-        boolean cancel = false;
+        boolean isValid = true;
 
-        if (TextUtils.isEmpty(firstName)) {
-            mFirstNameView.setError(getString(R.string.empty_first_name));
-            cancel = true;
-        }
-        if (TextUtils.isEmpty(lastName)) {
-            mLastNameView.setError(getString(R.string.empty_last_name));
-            cancel = true;
-        }
-        if (!this.isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.invalid_email));
-            cancel = true;
-        }
-        if (TextUtils.isEmpty(username)) {
-            mUsernameView.setError(getString(R.string.empty_username));
-            cancel = true;
-        }
-        if (TextUtils.isEmpty(password)) {
-            mPasswordView.setError(getString(R.string.empty_password));
-            cancel = true;
-        }
-        if (TextUtils.isEmpty(reenterPassword)) {
-            mReenterPasswordView.setError(getString(R.string.empty_reenter_password));
-            cancel = true;
-        }
-        if(!password.equals(reenterPassword)) {
-            mPasswordView.setError(getString(R.string.invalid_password));
-            mReenterPasswordView.setError(getString(R.string.invalid_password));
-            cancel = true;
+        if (firstName.isEmpty()) {
+            inputLayoutFirstName.setError(getString(R.string.empty_first_name));
+            isValid = false;
+        } else {
+            inputLayoutFirstName.setErrorEnabled(false);
         }
 
-        if(!cancel) {
+        if (lastName.isEmpty()) {
+            inputLayoutLastName.setError(getString(R.string.empty_last_name));
+            isValid = false;
+        } else {
+            inputLayoutLastName.setErrorEnabled(false);
+        }
+
+        if (email.isEmpty() || isEmailValid(email)) {
+            inputLayoutEmail.setError(getString(R.string.invalid_email));
+            isValid = false;
+        } else {
+            inputLayoutEmail.setErrorEnabled(false);
+        }
+
+        if (username.isEmpty()) {
+            inputLayoutUsername.setError(getString(R.string.empty_username));
+            isValid = false;
+        } else {
+            inputLayoutUsername.setErrorEnabled(false);
+        }
+
+        if (password.isEmpty()) {
+            inputLayoutPassword.setError(getString(R.string.empty_password));
+            isValid = false;
+        } else {
+            inputLayoutPassword.setErrorEnabled(false);
+        }
+
+        if (reenterPassword.isEmpty()) {
+            inputLayoutReenterPassword.setError(getString(R.string.empty_reenter_password));
+            isValid = false;
+        } else {
+            inputLayoutReenterPassword.setErrorEnabled(false);
+        }
+
+        if (!password.equals(reenterPassword)) {
+            inputLayoutPassword.setError(getString(R.string.invalid_password));
+            inputLayoutReenterPassword.setError(getString(R.string.invalid_password));
+            isValid = false;
+        } else {
+            inputLayoutPassword.setErrorEnabled(false);
+            inputLayoutReenterPassword.setErrorEnabled(false);
+        }
+
+        if(isValid) {
             // Set up our handler
             HashMap<String, String> params = new HashMap<>();
             params.put(getString(R.string.first_name), firstName);
@@ -86,6 +151,13 @@ public class RegisterActivity extends AppCompatActivity {
             // Execute the task and forward to the next activity if successful
             handler.execute((Void) null);
         }
+    }
+
+    /**
+     * If cancelled, return to login page
+     */
+    public void cancel() {
+        startActivity(new Intent(this, LoginActivity.class));
     }
 
     private boolean isEmailValid(String email) {

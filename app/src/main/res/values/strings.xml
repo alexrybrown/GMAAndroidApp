@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">GoalsMadeAttainable</string>
+    <string name="app_name">Goals Made Attainable</string>
 
     <!-- Strings related to login -->
+    <string name="login_toolbar_title">Login</string>
     <string name="prompt_user">Username</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
@@ -25,21 +26,21 @@
     <string name="user_token">token</string>
 
     <!-- Strings related to registration -->
-    <string name="first_name_hint">Enter your first name</string>
-    <string name="last_name_hint">Enter your last name</string>
-    <string name="email_hint">Enter your email</string>
-    <string name="username_hint">Enter your username</string>
-    <string name="password_hint">Enter your password</string>
-    <string name="reenter_password_hint">Reenter your password</string>
+    <string name="first_name_hint">First Name</string>
+    <string name="last_name_hint">Last Name</string>
+    <string name="email_hint">Email</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="reenter_password_hint">Reenter Password</string>
     <string name="empty_first_name">Please provide a first name</string>
     <string name="empty_last_name">Please provide a last name</string>
     <string name="invalid_email">Please provide a valid email</string>
     <string name="empty_username">Please provide a username</string>
-    <string name="non_unique_username">Username taken please provide another</string>
     <string name="empty_password">Please provide a password</string>
     <string name="empty_reenter_password">Please retype your password</string>
     <string name="invalid_password">Passwords do not match</string>
-    <string name="submit_registraion_button">Submit</string>
+    <string name="submit_registration_button">Submit</string>
+    <string name="cancel_registration_button">Cancel</string>
     <string name="register_url">accounts/</string>
     <string name="failed_to_register">Registration failed.</string>
     <string name="registration_successful">Registration successful.</string>
@@ -58,4 +59,12 @@
     <string name="remove_sub_goal">Remove Sub Goal</string>
     <string name="submit_goals">Submit Goals</string>
     <string name="goal_submission_error">A goal must have a value</string>
+
+    <!-- Strings related to toolbar -->
+    <string name="save">Save</string>
+    <string name="mail">Email</string>
+    <string name="settings">Settings</string>
+    <string name="camera">Camera</string>
+    <string name="help">Help</string>
+    <string name="web_search">Web Search</string>
 </resources>

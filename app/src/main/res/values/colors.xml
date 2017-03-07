@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#3fb592</color>
+    <color name="colorPrimaryDark">#309f7a</color>
+    <color name="colorAccent">#ffb640</color>
+
+    <color name="textColorPrimary">#fff</color>
+    <color name="overflowMenuBg">#ede2b2</color>
+    <color name="grey_800">#838493</color>
+    <color name="contextual_background">#5ce2be</color>
+    <color name="contextualText">#e18383</color>
+
 </resources>
