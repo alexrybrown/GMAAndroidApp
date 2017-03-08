@@ -11,8 +11,8 @@ import android.widget.EditText;
 
 import java.util.HashMap;
 
+import utils.GMAUrlConnection;
 import utils.HttpURLConnectionHandler;
-import utils.RegisterURLConnectionHandler;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -97,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
             inputLayoutLastName.setErrorEnabled(false);
         }
 
-        if (email.isEmpty() || isEmailValid(email)) {
+        if (email.isEmpty()) {
             inputLayoutEmail.setError(getString(R.string.invalid_email));
             isValid = false;
         } else {
@@ -144,10 +144,10 @@ public class RegisterActivity extends AppCompatActivity {
             params.put(getString(R.string.password), password);
             params.put(getString(R.string.confirm_password), reenterPassword);
             Intent intent = new Intent(this, LoginActivity.class);
-            RegisterURLConnectionHandler handler = new RegisterURLConnectionHandler(
-                    getString(R.string.register_url), getString(R.string.registration_successful),
-                    getString(R.string.failed_to_register), HttpURLConnectionHandler.Method.POST,
-                    params, this, intent);
+            GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
+                    getString(R.string.register_url), GMAUrlConnection.Method.POST, params, this, "");
+            HttpURLConnectionHandler handler = new HttpURLConnectionHandler(
+                    getString(R.string.registration_successful), getString(R.string.failed_to_register), intent, gmaUrlConnection);
             // Execute the task and forward to the next activity if successful
             handler.execute((Void) null);
         }
@@ -158,10 +158,5 @@ public class RegisterActivity extends AppCompatActivity {
      */
     public void cancel() {
         startActivity(new Intent(this, LoginActivity.class));
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
     }
 }

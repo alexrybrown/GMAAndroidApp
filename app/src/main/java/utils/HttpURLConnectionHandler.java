@@ -1,110 +1,53 @@
 package utils;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Task will run communications to server through async task
  */
-public abstract class HttpURLConnectionHandler extends AsyncTask<Void, Void, String> {
-    public enum Method {GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE}
-    protected String rootUrl;
-    protected String apiEndpoint;
-    protected Method method;
-    protected HashMap<String, String> params;
-    protected int responseCode;
-    protected Context context;
+public class HttpURLConnectionHandler extends AsyncTask<Void, Void, String> {
+    protected int responseCode = 0;
     protected Intent intent;
     protected String success;
     protected String failure;
-    protected String token = "";
+    protected GMAUrlConnection gmaUrlConnection;
 
-    /**
-     * Sets up the needed information to use the handler
-     * @param apiEndpoint represents the endpoint on the server this connection
-     *                    needs to connect to
-     * @param method represents whether this is a 'GET', 'POST', 'HEAD', 'OPTIONS',
-     *               'PUT', 'DELETE', or 'TRACE'
-     * @param params required parameters to be put in the url for the given method
-     */
-    public HttpURLConnectionHandler(String apiEndpoint, String success, String failure, Method method,
-                                    HashMap<String, String> params, Context context, Intent intent) {
-        this.apiEndpoint = apiEndpoint;
-        this.method = method;
-        this.params = params;
-        this.responseCode = 0;
-        this.context = context;
+
+    public HttpURLConnectionHandler(String success, String failure, Intent intent,
+                                    GMAUrlConnection gmaUrlConnection) {
         this.intent = intent;
         this.success = success;
         this.failure = failure;
-        try {
-            // Get local url when developing
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader(context.getResources().getAssets().open("url.txt")));
-            this.rootUrl = br.readLine();
-        } catch (Exception e) {
-            // Get production url on server
-            this.rootUrl = "https://arcane-fjord-64904.herokuapp.com/";
-        }
+        this.gmaUrlConnection = gmaUrlConnection;
     }
 
     // Starts the communication process with the server
     protected String doInBackground(Void... params) {
+        // Run the connection handler
+        HttpURLConnection conn = gmaUrlConnection.run();
+
         try {
-            URL url = new URL(rootUrl + apiEndpoint);
-
-            // Set the basics of the connection up
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(15000);
-            conn.setDoInput(true);
-            conn.setRequestMethod(method.name());
-            // Check to see if we have a token
-            if (!token.isEmpty()) {
-                conn.setRequestProperty("Authorization", "Token " + this.token);
-            }
-
-            // If we have params send them to the server
-            if(this.params != null) {
-                conn.setDoOutput(true);
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(getParamsString());
-                writer.flush();
-                writer.close();
-                os.close();
-            }
-
             // Get the response code
             responseCode = conn.getResponseCode();
 
             // Handle the response
             return this.handleResponse(conn);
-        } catch (Exception e) {
-            return e.getMessage();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Critical Failure";
         }
     }
 
     @Override
     protected void onPostExecute(String result) {
-        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+        Toast.makeText(gmaUrlConnection.getContext(), result, Toast.LENGTH_LONG).show();
         if(!result.equals(failure)) {
-            context.startActivity(intent);
+            gmaUrlConnection.getContext().startActivity(intent);
         }
     }
 
@@ -120,34 +63,5 @@ public abstract class HttpURLConnectionHandler extends AsyncTask<Void, Void, Str
         } else {
             return failure;
         }
-    }
-
-    /**
-     * Changes the hash map of params into a string representation
-     * @return string representation of the params
-     */
-    private String getParamsString() throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        for(Map.Entry<String, String> entry : params.entrySet()) {
-            if(first) {
-                first = false;
-            } else {
-                result.append("&");
-            }
-
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-        }
-        return result.toString();
-    }
-
-    /**
-     * Sets the token
-     * @param token to be set in class
-     */
-    public void setToken(String token) {
-        this.token = token;
     }
 }

@@ -14,6 +14,7 @@ import android.widget.EditText;
 import java.util.HashMap;
 
 import utils.DBTools;
+import utils.GMAUrlConnection;
 import utils.LoginURLConnectionHandler;
 import utils.HttpURLConnectionHandler;
 
@@ -106,10 +107,11 @@ public class LoginActivity extends AppCompatActivity {
             params.put(getString(R.string.username), username);
             params.put(getString(R.string.password), password);
             Intent intent = new Intent(this, UpcomingGoals.class);
+            GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
+                    getString(R.string.login_url), GMAUrlConnection.Method.POST, params, this, "");
             LoginURLConnectionHandler handler = new LoginURLConnectionHandler(
-                    getString(R.string.login_url), getString(R.string.login_successful),
-                    getString(R.string.failed_to_login), HttpURLConnectionHandler.Method.POST,
-                    params, this, intent);
+                    getString(R.string.login_successful), getString(R.string.failed_to_login),
+                    intent, gmaUrlConnection);
             handler.execute((Void) null);
         }
     }

@@ -1,6 +1,5 @@
 package utils;
 
-import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
@@ -13,12 +12,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.util.HashMap;
 
 public class LoginURLConnectionHandler extends HttpURLConnectionHandler {
-    public LoginURLConnectionHandler(String apiEndpoint, String success, String failure, Method method,
-                                     HashMap<String, String> params, Context context, Intent intent) {
-        super(apiEndpoint, success, failure, method, params, context, intent);
+    public LoginURLConnectionHandler(String success, String failure, Intent intent,
+                                     GMAUrlConnection gmaUrlConnection) {
+        super(success, failure, intent, gmaUrlConnection);
     }
 
     /**
@@ -41,7 +39,8 @@ public class LoginURLConnectionHandler extends HttpURLConnectionHandler {
             // Create a JSONObject to get our data
             try {
                 JSONObject json = new JSONObject(sb.toString());
-                this.token = json.getString(context.getString(R.string.user_token));
+                gmaUrlConnection.setToken(
+                        json.getString(gmaUrlConnection.getContext().getString(R.string.user_token)));
                 return success;
             } catch (JSONException e) {
                 System.err.print(e.getMessage());
@@ -56,14 +55,16 @@ public class LoginURLConnectionHandler extends HttpURLConnectionHandler {
 
     @Override
     protected void onPostExecute(String result) {
-        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
         if(!result.equals(failure)) {
+            gmaUrlConnection.setApiEndpoint(gmaUrlConnection.getContext().getString(R.string.user_info_url)
+                    + gmaUrlConnection.getToken()
+                    + gmaUrlConnection.getContext().getString(R.string.user_token_info));
+            gmaUrlConnection.setMethod(GMAUrlConnection.Method.GET);
             UserInfoURLConnectionHandler handler = new UserInfoURLConnectionHandler(
-                    context.getString(R.string.user_info_url) + token + context.getString(R.string.user_token_info),
-                    success, failure,
-                    HttpURLConnectionHandler.Method.GET, null, context, intent);
-            handler.setToken(token);
+                    success, failure, intent, gmaUrlConnection);
             handler.execute((Void) null);
+        } else {
+            Toast.makeText(gmaUrlConnection.getContext(), result, Toast.LENGTH_LONG).show();
         }
     }
 }

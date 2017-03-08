@@ -110,7 +110,7 @@ public class DBTools extends SQLiteOpenHelper {
      */
     public boolean checkUserExists(String token) throws SQLiteConstraintException {
         SQLiteDatabase database = this.getReadableDatabase();
-        Cursor cursor = database.query(USER_TABLE, null, USER_COLUMN_TOKEN + "=" + token,
+        Cursor cursor = database.query(USER_TABLE, null, USER_COLUMN_TOKEN + "='" + token + "'",
                                        null, null, null, null, null);
         Boolean status = cursor.getCount() > 0;
         cursor.close();
@@ -125,7 +125,7 @@ public class DBTools extends SQLiteOpenHelper {
         // Get the token for the active user.
         String token = getToken();
         SQLiteDatabase database = this.getReadableDatabase();
-        Cursor cursor = database.query(USER_TABLE, null, USER_COLUMN_TOKEN + "=" + token,
+        Cursor cursor = database.query(USER_TABLE, null, USER_COLUMN_TOKEN + "='" + token+ "'",
                                        null, null, null, null, null);
         // Since token is unique, cursor should have only one row
         User user = new User();

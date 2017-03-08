@@ -1,6 +1,5 @@
 package utils;
 
-import android.content.Context;
 import android.content.Intent;
 
 import com.goalsmadeattainable.goalsmadeattainable.R;
@@ -12,12 +11,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.util.HashMap;
 
 public class UserInfoURLConnectionHandler extends HttpURLConnectionHandler {
-    public UserInfoURLConnectionHandler(String apiEndpoint, String success, String failure, Method method,
-                                        HashMap<String, String> params, Context context, Intent intent) {
-        super(apiEndpoint, success, failure, method, params, context, intent);
+    public UserInfoURLConnectionHandler(String success, String failure, Intent intent,
+                                        GMAUrlConnection gmaUrlConnection) {
+        super(success, failure, intent, gmaUrlConnection);
     }
 
     /**
@@ -40,16 +38,16 @@ public class UserInfoURLConnectionHandler extends HttpURLConnectionHandler {
             // Create a JSONObject to get our data
             try {
                 JSONObject json = new JSONObject(sb.toString());
-                DBTools dbTools = new DBTools(context);
+                DBTools dbTools = new DBTools(gmaUrlConnection.getContext());
                 // Create the user if they don't exist in the database
-                if (!dbTools.checkUserExists(token)) {
+                if (!dbTools.checkUserExists(gmaUrlConnection.getToken())) {
                     User user = new User();
-                    user.userID = json.getInt(context.getString(R.string.user_id));
-                    user.firstName = json.getString(context.getString(R.string.user_first_name));
-                    user.lastName = json.getString(context.getString(R.string.user_last_name));
-                    user.username = json.getString(context.getString(R.string.user_username));
-                    user.email = json.getString(context.getString(R.string.user_email));
-                    user.token = token;
+                    user.userID = json.getInt(gmaUrlConnection.getContext().getString(R.string.user_id));
+                    user.firstName = json.getString(gmaUrlConnection.getContext().getString(R.string.user_first_name));
+                    user.lastName = json.getString(gmaUrlConnection.getContext().getString(R.string.user_last_name));
+                    user.username = json.getString(gmaUrlConnection.getContext().getString(R.string.user_username));
+                    user.email = json.getString(gmaUrlConnection.getContext().getString(R.string.user_email));
+                    user.token = gmaUrlConnection.getToken();
                     dbTools.createUser(user);
                 }
                 dbTools.close();
