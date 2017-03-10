@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import java.util.HashMap;
 
@@ -17,10 +18,11 @@ import utils.HttpURLConnectionHandler;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText firstNameEditText, lastNameEditText, emailEditText, usernameEditText,
-            passwordEditText, reenterPasswordEditText;
+    private RelativeLayout rootLayout;
     private TextInputLayout inputLayoutFirstName, inputLayoutLastName, inputLayoutEmail,
             inputLayoutUsername, inputLayoutPassword, inputLayoutReenterPassword;
+    private EditText firstNameEditText, lastNameEditText, emailEditText, usernameEditText,
+            passwordEditText, reenterPasswordEditText;
     private Button submitButton, cancelButton;
 
     @Override
@@ -34,6 +36,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void initializeWidgets() {
+        rootLayout = (RelativeLayout) findViewById(R.id.activity_register);
+
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
@@ -145,9 +149,11 @@ public class RegisterActivity extends AppCompatActivity {
             params.put(getString(R.string.confirm_password), reenterPassword);
             Intent intent = new Intent(this, LoginActivity.class);
             GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
-                    getString(R.string.register_url), GMAUrlConnection.Method.POST, params, this, "");
+                    getString(R.string.register_url), GMAUrlConnection.Method.POST,
+                    params, this, "");
             HttpURLConnectionHandler handler = new HttpURLConnectionHandler(
-                    getString(R.string.registration_successful), getString(R.string.failed_to_register), intent, gmaUrlConnection);
+                    getString(R.string.registration_successful), getString(R.string.failed_to_register), intent,
+                    gmaUrlConnection, true);
             // Execute the task and forward to the next activity if successful
             handler.execute((Void) null);
         }

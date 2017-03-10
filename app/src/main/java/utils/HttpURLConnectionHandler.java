@@ -1,5 +1,6 @@
 package utils;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -16,20 +17,26 @@ public class HttpURLConnectionHandler extends AsyncTask<Void, Void, String> {
     protected String success;
     protected String failure;
     protected GMAUrlConnection gmaUrlConnection;
+    protected Boolean clearStack;
 
 
     public HttpURLConnectionHandler(String success, String failure, Intent intent,
-                                    GMAUrlConnection gmaUrlConnection) {
+                                    GMAUrlConnection gmaUrlConnection, Boolean clearStack) {
         this.intent = intent;
         this.success = success;
         this.failure = failure;
         this.gmaUrlConnection = gmaUrlConnection;
+        this.clearStack = clearStack;
     }
 
     // Starts the communication process with the server
     protected String doInBackground(Void... params) {
         // Run the connection handler
         HttpURLConnection conn = gmaUrlConnection.run();
+
+        if (gmaUrlConnection.getTimedOut()) {
+            return gmaUrlConnection.getMessage();
+        }
 
         try {
             // Get the response code
@@ -46,8 +53,13 @@ public class HttpURLConnectionHandler extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         Toast.makeText(gmaUrlConnection.getContext(), result, Toast.LENGTH_LONG).show();
-        if(!result.equals(failure)) {
+        if (result.equals(success)) {
             gmaUrlConnection.getContext().startActivity(intent);
+            if (clearStack) { // If we want to clear the stack we will finish the activity
+                Activity activity = (Activity) gmaUrlConnection.getContext();
+                activity.finish();
+            }
+
         }
     }
 

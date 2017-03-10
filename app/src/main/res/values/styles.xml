@@ -9,13 +9,13 @@
 
     <style name="SuperMaterialTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Parent theme for all Pre-Lollipop and Lollipop above versions i.e. For all devices. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
 
-        <item name="colorControlHighlight">#edea0d</item>
-        <item name="colorButtonNormal">#f9af55</item>
-        <item name="colorControlActivated">#0cf427</item>
+        <!--<item name="colorControlHighlight">#edea0d</item>-->
+        <!--<item name="colorButtonNormal">#f9af55</item>-->
+        <!--<item name="colorControlActivated">#0cf427</item>-->
 
         <!-- use to make contextual action mode overlap the Toolbar -->
         <item name="windowActionModeOverlay">true</item>
@@ -27,7 +27,7 @@
     <style name="MyActionMode" parent = "@style/Widget.AppCompat.ActionMode">
 
         <!-- background of the Contextual Action Bar -->
-        <item name="background">@color/contextual_background</item>
+        <!--<item name="background">@color/contextual_background</item>-->
 
         <item name="titleTextStyle">@style/MyTextStyle</item>
 
@@ -38,7 +38,7 @@
 
     <!-- Contextual ActionBar title text -->
     <style name="MyTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">@color/contextualText</item>
+        <!--<item name="android:textColor">@color/contextualText</item>-->
     </style>
 
      <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Light">
@@ -49,8 +49,8 @@
    </style>
 
     <style name="MyPopupTheme" parent="ThemeOverlay.AppCompat.Light">
-        <item name="android:background">@color/overflowMenuBg</item><!--Background of Overflow Menu-->
-        <item name="android:textColorPrimary">@color/grey_800</item><!-- Text color of Overflow Menu items-->
+        <!--<item name="android:background">@color/overflowMenuBg</item>&lt;!&ndash;Background of Overflow Menu&ndash;&gt;-->
+        <!--<item name="android:textColorPrimary">@color/grey_800</item>&lt;!&ndash; Text color of Overflow Menu items&ndash;&gt;-->
     </style>
 
 

@@ -1,7 +1,6 @@
 package utils;
 
 import android.content.Context;
-import android.media.session.MediaSession;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,6 +9,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -22,6 +22,8 @@ public class GMAUrlConnection {
     private HashMap<String, String> params;
     private Context context;
     private String token;
+    private String message;
+    private Boolean timedOut = false;
 
     public GMAUrlConnection(String apiEndpoint, Method method, HashMap<String, String> params,
                             Context context, String token) {
@@ -40,8 +42,8 @@ public class GMAUrlConnection {
 
             // Set the basics of the connection up
             conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(1000);
+            conn.setConnectTimeout(1000);
             conn.setDoInput(true);
             conn.setRequestMethod(method.name());
             // Check to see if we have a token
@@ -60,6 +62,10 @@ public class GMAUrlConnection {
                 os.close();
             }
 
+        } catch (SocketTimeoutException e) {
+            this.message = "Connection failed!";
+            this.timedOut = true;
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -68,6 +74,14 @@ public class GMAUrlConnection {
 
     public Context getContext() {
         return context;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Boolean getTimedOut() {
+        return timedOut;
     }
 
     public String getToken() {

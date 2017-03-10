@@ -14,8 +14,8 @@ import java.net.HttpURLConnection;
 
 public class UserInfoURLConnectionHandler extends HttpURLConnectionHandler {
     public UserInfoURLConnectionHandler(String success, String failure, Intent intent,
-                                        GMAUrlConnection gmaUrlConnection) {
-        super(success, failure, intent, gmaUrlConnection);
+                                        GMAUrlConnection gmaUrlConnection, Boolean clearStack) {
+        super(success, failure, intent, gmaUrlConnection, clearStack);
     }
 
     /**
@@ -40,7 +40,7 @@ public class UserInfoURLConnectionHandler extends HttpURLConnectionHandler {
                 JSONObject json = new JSONObject(sb.toString());
                 DBTools dbTools = new DBTools(gmaUrlConnection.getContext());
                 // Create the user if they don't exist in the database
-                if (!dbTools.checkUserExists(gmaUrlConnection.getToken())) {
+                if (!dbTools.checkUserExistsByToken(gmaUrlConnection.getToken())) {
                     User user = new User();
                     user.userID = json.getInt(gmaUrlConnection.getContext().getString(R.string.user_id));
                     user.firstName = json.getString(gmaUrlConnection.getContext().getString(R.string.user_first_name));
@@ -50,6 +50,9 @@ public class UserInfoURLConnectionHandler extends HttpURLConnectionHandler {
                     user.token = gmaUrlConnection.getToken();
                     dbTools.createUser(user);
                 }
+                // Remove the active user and set the active user to the one who signed in
+                dbTools.removeActiveUsers();
+                dbTools.setActiveUser(gmaUrlConnection.getToken());
                 dbTools.close();
                 return success;
             } catch (JSONException e) {

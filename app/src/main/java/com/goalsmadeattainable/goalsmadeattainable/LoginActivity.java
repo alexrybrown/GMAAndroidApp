@@ -10,19 +10,20 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import java.util.HashMap;
 
 import utils.DBTools;
 import utils.GMAUrlConnection;
 import utils.LoginURLConnectionHandler;
-import utils.HttpURLConnectionHandler;
 
 /**
  * A login screen that offers login via username/password.
  */
 public class LoginActivity extends AppCompatActivity {
 
+    private RelativeLayout rootLayout;
     private EditText usernameEditText, passwordEditText;
     private TextInputLayout inputLayoutUsername, inputLayoutPassword;
     private Button signInButton, registerButton;
@@ -32,12 +33,25 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // If we have an active user or the user is already in our
+        // database then skip making the request.
+        DBTools dbTools = new DBTools(this);
+        if (dbTools.checkActiveUserExists()) {
+            dbTools.close();
+            Intent intent = new Intent(this, UpcomingGoalsActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        dbTools.close();
+
         initializeWidgets();
 
         initializeListeners();
     }
 
     private void initializeWidgets() {
+        rootLayout = (RelativeLayout) findViewById(R.id.activity_login);
+
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
@@ -73,15 +87,6 @@ public class LoginActivity extends AppCompatActivity {
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        // If we have a token we don't need to login
-        DBTools dbTools = new DBTools(this);
-        if (!dbTools.getToken().isEmpty()) {
-            dbTools.close();
-            Intent intent = new Intent(this, UpcomingGoals.class);
-            startActivity(intent);
-        }
-        dbTools.close();
-
         boolean isValid = true;
 
         String username = usernameEditText.getText().toString();
@@ -106,12 +111,13 @@ public class LoginActivity extends AppCompatActivity {
             HashMap<String, String> params = new HashMap<String, String>();
             params.put(getString(R.string.username), username);
             params.put(getString(R.string.password), password);
-            Intent intent = new Intent(this, UpcomingGoals.class);
+            Intent intent = new Intent(this, UpcomingGoalsActivity.class);
             GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
-                    getString(R.string.login_url), GMAUrlConnection.Method.POST, params, this, "");
+                    getString(R.string.login_url), GMAUrlConnection.Method.POST,
+                    params, this, "");
             LoginURLConnectionHandler handler = new LoginURLConnectionHandler(
                     getString(R.string.login_successful), getString(R.string.failed_to_login),
-                    intent, gmaUrlConnection);
+                    intent, gmaUrlConnection, true);
             handler.execute((Void) null);
         }
     }
@@ -119,6 +125,11 @@ public class LoginActivity extends AppCompatActivity {
     private void register() {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 }
 

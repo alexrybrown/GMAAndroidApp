@@ -7,6 +7,7 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.BoringLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +38,7 @@ public class DBTools extends SQLiteOpenHelper {
     // Create setup for goal representation in database
     private static final String GOAL_TABLE = "goal";
     private static final String GOAL_COLUMN_ID = "id";
-    private static final String GOAL_COLUMN_PARENT_ID = "parent_id";
+    private static final String GOAL_COLUMN_FUTURE_ID = "future_id";
     private static final String GOAL_COLUMN_TITLE = "title";
     private static final String GOAL_COLUMN_DESCRIPTION = "description";
     private static final String GOAL_COLUMN_COMMENT = "comment";
@@ -47,12 +48,12 @@ public class DBTools extends SQLiteOpenHelper {
     private static final String GOAL_COLUMN_ARCHIVED = "archived";
     private static final String GOAL_TABLE_CREATE =
             "CREATE TABLE " + GOAL_TABLE + " (" + GOAL_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + GOAL_COLUMN_PARENT_ID + " INTEGER, " + GOAL_COLUMN_TITLE
+                    + GOAL_COLUMN_FUTURE_ID + " INTEGER, " + GOAL_COLUMN_TITLE
                     + " TEXT, " + GOAL_COLUMN_DESCRIPTION + " TEXT, " + GOAL_COLUMN_COMMENT + " TEXT, "
                     + GOAL_COLUMN_CREATED_AT + " DATETIME, "
                     + GOAL_COLUMN_EXPECTED_COMPLETION + " DATETIME, "
                     + GOAL_COLUMN_FINISHED_AT + " DATETIME, "
-                    + GOAL_COLUMN_ARCHIVED + " BOOLEAN, FOREIGN KEY (" + GOAL_COLUMN_PARENT_ID
+                    + GOAL_COLUMN_ARCHIVED + " BOOLEAN, FOREIGN KEY (" + GOAL_COLUMN_FUTURE_ID
                     + ") REFERENCES " + GOAL_TABLE + " (" + GOAL_COLUMN_ID + "))";
 
     // Create setup for user having goals in database
@@ -97,7 +98,6 @@ public class DBTools extends SQLiteOpenHelper {
         values.put(USER_COLUMN_LAST_NAME, user.lastName);
         values.put(USER_COLUMN_USERNAME, user.username);
         values.put(USER_COLUMN_EMAIL, user.email);
-        values.put(USER_COLUMN_ACTIVE, true);
         database.insertOrThrow(USER_TABLE, null, values);
         database.close();
     }
@@ -108,7 +108,7 @@ public class DBTools extends SQLiteOpenHelper {
      * @return whether the token is already in the database or not
      * @throws SQLiteConstraintException
      */
-    public boolean checkUserExists(String token) throws SQLiteConstraintException {
+    public boolean checkUserExistsByToken(String token) {
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.query(USER_TABLE, null, USER_COLUMN_TOKEN + "='" + token + "'",
                                        null, null, null, null, null);
@@ -117,15 +117,24 @@ public class DBTools extends SQLiteOpenHelper {
         return status;
     }
 
+    public boolean checkActiveUserExists() {
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.query(USER_TABLE, null, USER_COLUMN_ACTIVE + "=1",
+                                       null, null, null, null, null);
+        Boolean status = cursor.getCount() > 0;
+        cursor.close();
+        return status;
+    }
+
+
     /**
      * Gets the active user out of the database
      * @return the active user from the database
      */
     public User getActiveUser() {
         // Get the token for the active user.
-        String token = getToken();
         SQLiteDatabase database = this.getReadableDatabase();
-        Cursor cursor = database.query(USER_TABLE, null, USER_COLUMN_TOKEN + "='" + token+ "'",
+        Cursor cursor = database.query(USER_TABLE, null, USER_COLUMN_ACTIVE + "=1",
                                        null, null, null, null, null);
         // Since token is unique, cursor should have only one row
         User user = new User();
@@ -137,6 +146,27 @@ public class DBTools extends SQLiteOpenHelper {
         user.token = cursor.getString(5);
         cursor.close();
         return user;
+    }
+
+    /**
+     * Sets the active user in the database.
+     * @param token of given user
+     */
+    public void setActiveUser(String token) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(USER_COLUMN_ACTIVE, 1);
+        database.update(USER_TABLE, values, USER_COLUMN_TOKEN + "='" + token + "'", null);
+    }
+
+    /**
+     * Will remove all active users from the database
+     */
+    public void removeActiveUsers() {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(USER_COLUMN_ACTIVE, 0);
+        database.update(USER_TABLE, values, USER_COLUMN_ACTIVE + "=1", null);
     }
 
     /**

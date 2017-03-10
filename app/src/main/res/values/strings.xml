@@ -15,7 +15,7 @@
         completions."</string>
     <string name="login_url">api-token-auth/</string>
     <string name="user_info_url">accounts/</string>
-    <string name="user_token_info">/info/</string>
+    <string name="user_token_info">user-info/</string>
     <string name="failed_to_login">Failed to login.</string>
     <string name="login_successful">Login successful.</string>
     <string name="user_id">id</string>
@@ -52,19 +52,13 @@
     <string name="confirm_password">confirm_password</string>
 
     <!-- Strings related to goals -->
-    <string name="add_new_goal">Add New Goal</string>
-    <string name="enter_goal">Enter Primary Goal</string>
-    <string name="enter_sub_goal">Enter Sub Goal</string>
-    <string name="add_sub_goal">Add Sub Goal</string>
-    <string name="remove_sub_goal">Remove Sub Goal</string>
-    <string name="submit_goals">Submit Goals</string>
-    <string name="goal_submission_error">A goal must have a value</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="pick_date">Pick Expected Completion Date</string>
+    <string name="pick_time">Pick Expected Completion Time</string>
+    <string name="create_goal">Create Goal</string>
+    <string name="cancel_submit_goal">Cancel</string>
 
     <!-- Strings related to toolbar -->
-    <string name="save">Save</string>
-    <string name="mail">Email</string>
-    <string name="settings">Settings</string>
-    <string name="camera">Camera</string>
-    <string name="help">Help</string>
-    <string name="web_search">Web Search</string>
+    <string name="logout">Logout</string>
 </resources>
