@@ -6,7 +6,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/goals"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppMaterialTheme">
@@ -20,8 +20,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".UpcomingGoalsActivity" />
-        <activity android:name=".CreateGoal.CreateGoalActivity"></activity>
+        <activity android:name=".FutureGoalsActivity" />
+        <activity android:name=".CreateGoal.CreateGoalActivity" />
+        <activity android:name=".GoalDetailsActivity"></activity>
     </application>
 
 </manifest>

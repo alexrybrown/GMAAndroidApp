@@ -4,18 +4,25 @@
     android:layout_height="match_parent"
     android:id="@+id/activity_create_goal">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"/>
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"/>
+
+    </android.support.design.widget.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_below="@+id/toolbar"
+        android:layout_below="@+id/appBarLayout"
         android:layout_above="@+id/button_bar"
         android:layout_margin="20dp">
 
@@ -23,12 +30,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <Spinner
-                android:id="@+id/future_goal_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:spinnerMode="dropdown"/>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/inputLayoutTitle"
@@ -51,22 +52,29 @@
                 <EditText android:id="@+id/descriptionField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/description"
-                    android:maxLines="1" />
+                    android:hint="@string/description" />
 
             </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:id="@+id/pick_date_button"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/pick_date" />
 
             <Button
-                android:id="@+id/pick_time_button"
+                android:id="@+id/pick_date_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/pick_time" />
+
+            <Button
+                android:id="@+id/pick_time_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </ScrollView>
 
@@ -78,19 +86,19 @@
         style="?android:attr/buttonBarStyle">
 
         <Button
-            android:id="@+id/create_goal_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/create_goal"
-            style="?android:attr/buttonBarButtonStyle"/>
-
-        <Button
             android:id="@+id/cancel_submit_goal_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/cancel_submit_goal"
+            style="?android:attr/buttonBarButtonStyle"/>
+
+        <Button
+            android:id="@+id/create_goal_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/create_goal"
             style="?android:attr/buttonBarButtonStyle"/>
     </LinearLayout>
 </RelativeLayout>

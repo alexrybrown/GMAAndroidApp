@@ -12,8 +12,8 @@ import android.widget.RelativeLayout;
 
 import java.util.HashMap;
 
-import utils.GMAUrlConnection;
-import utils.HttpURLConnectionHandler;
+import utils.handlers.GMAUrlConnection;
+import utils.handlers.HttpURLConnectionHandler;
 
 
 public class RegisterActivity extends AppCompatActivity {

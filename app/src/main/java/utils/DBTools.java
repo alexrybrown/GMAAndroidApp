@@ -45,14 +45,16 @@ public class DBTools extends SQLiteOpenHelper {
     private static final String GOAL_COLUMN_CREATED_AT = "created_at";
     private static final String GOAL_COLUMN_EXPECTED_COMPLETION = "expected_completion";
     private static final String GOAL_COLUMN_FINISHED_AT = "finished_at";
+    private static final String GOAL_COLUMN_LAST_MODIFIED = "last_modified";
     private static final String GOAL_COLUMN_ARCHIVED = "archived";
     private static final String GOAL_TABLE_CREATE =
-            "CREATE TABLE " + GOAL_TABLE + " (" + GOAL_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "CREATE TABLE " + GOAL_TABLE + " (" + GOAL_COLUMN_ID + " INTEGER PRIMARY KEY, "
                     + GOAL_COLUMN_FUTURE_ID + " INTEGER, " + GOAL_COLUMN_TITLE
                     + " TEXT, " + GOAL_COLUMN_DESCRIPTION + " TEXT, " + GOAL_COLUMN_COMMENT + " TEXT, "
                     + GOAL_COLUMN_CREATED_AT + " DATETIME, "
                     + GOAL_COLUMN_EXPECTED_COMPLETION + " DATETIME, "
                     + GOAL_COLUMN_FINISHED_AT + " DATETIME, "
+                    + GOAL_COLUMN_LAST_MODIFIED + " DATETIME, "
                     + GOAL_COLUMN_ARCHIVED + " BOOLEAN, FOREIGN KEY (" + GOAL_COLUMN_FUTURE_ID
                     + ") REFERENCES " + GOAL_TABLE + " (" + GOAL_COLUMN_ID + "))";
 
@@ -85,7 +87,7 @@ public class DBTools extends SQLiteOpenHelper {
     }
 
     /**
-     * Creates a token entry in the database for the user of this phone.
+     * Creates the user inside of this database.
      * @param user represents the user returned by the web service
      * @throws SQLiteConstraintException
      */
@@ -100,6 +102,34 @@ public class DBTools extends SQLiteOpenHelper {
         values.put(USER_COLUMN_EMAIL, user.email);
         database.insertOrThrow(USER_TABLE, null, values);
         database.close();
+    }
+
+    public void createOrUpdateGoal(Goal goal) throws SQLiteConstraintException {
+        SQLiteDatabase database = this.getWritableDatabase();
+        // Create goal in goal table
+        ContentValues values = new ContentValues();
+        values.put(GOAL_COLUMN_ID, goal.goalID);
+        values.put(GOAL_COLUMN_FUTURE_ID, goal.futureGoalID);
+        values.put(GOAL_COLUMN_TITLE, goal.title);
+        values.put(GOAL_COLUMN_DESCRIPTION, goal.description);
+        values.put(GOAL_COLUMN_COMMENT, goal.comment);
+        values.put(GOAL_COLUMN_CREATED_AT, goal.createdAt);
+        values.put(GOAL_COLUMN_EXPECTED_COMPLETION, goal.expectedCompletion);
+        values.put(GOAL_COLUMN_FINISHED_AT, goal.finishedAt);
+        values.put(GOAL_COLUMN_LAST_MODIFIED, goal.lastModified);
+        values.put(GOAL_COLUMN_ARCHIVED, goal.archived);
+        try {
+            database.insertOrThrow(GOAL_TABLE, null, values);
+            // Create link in user has goal table
+            values = new ContentValues();
+            values.put(USER_HAS_GOALS_COLUMN_USER_ID, goal.userID);
+            values.put(USER_HAS_GOALS_COLUMN_GOAL_ID, goal.goalID);
+            database.insertOrThrow(USER_HAS_GOALS_TABLE, null, values);
+            database.close();
+        } catch (SQLiteConstraintException e) {
+            database.update(GOAL_TABLE, values, GOAL_COLUMN_ID + "=" + goal.goalID, null);
+            database.close();
+        }
     }
 
     /**

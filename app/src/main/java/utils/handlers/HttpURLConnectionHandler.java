@@ -1,4 +1,4 @@
-package utils;
+package utils.handlers;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -52,9 +52,13 @@ public class HttpURLConnectionHandler extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        Toast.makeText(gmaUrlConnection.getContext(), result, Toast.LENGTH_LONG).show();
+        if (!result.isEmpty()) {
+            Toast.makeText(gmaUrlConnection.getContext(), result, Toast.LENGTH_LONG).show();
+        }
         if (result.equals(success)) {
-            gmaUrlConnection.getContext().startActivity(intent);
+            if (intent != null) {
+                gmaUrlConnection.getContext().startActivity(intent);
+            }
             if (clearStack) { // If we want to clear the stack we will finish the activity
                 Activity activity = (Activity) gmaUrlConnection.getContext();
                 activity.finish();

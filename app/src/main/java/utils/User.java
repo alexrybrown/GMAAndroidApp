@@ -8,6 +8,8 @@ public class User {
     public String email;
     public String token;
 
+    public User() {}
+
     public User(int userID, String firstName, String lastName, String email, String username, String token) {
         this.userID = userID;
         this.firstName = firstName;
@@ -16,6 +18,4 @@ public class User {
         this.email = email;
         this.token = token;
     }
-
-    public User() {}
 }

@@ -15,8 +15,8 @@ import android.widget.RelativeLayout;
 import java.util.HashMap;
 
 import utils.DBTools;
-import utils.GMAUrlConnection;
-import utils.LoginURLConnectionHandler;
+import utils.handlers.GMAUrlConnection;
+import utils.handlers.LoginURLConnectionHandler;
 
 /**
  * A login screen that offers login via username/password.
@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         DBTools dbTools = new DBTools(this);
         if (dbTools.checkActiveUserExists()) {
             dbTools.close();
-            Intent intent = new Intent(this, UpcomingGoalsActivity.class);
+            Intent intent = new Intent(this, FutureGoalsActivity.class);
             startActivity(intent);
             finish();
         }
@@ -111,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
             HashMap<String, String> params = new HashMap<String, String>();
             params.put(getString(R.string.username), username);
             params.put(getString(R.string.password), password);
-            Intent intent = new Intent(this, UpcomingGoalsActivity.class);
+            Intent intent = new Intent(this, FutureGoalsActivity.class);
             GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
                     getString(R.string.login_url), GMAUrlConnection.Method.POST,
                     params, this, "");

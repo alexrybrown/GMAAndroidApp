@@ -19,6 +19,7 @@
     <string name="failed_to_login">Failed to login.</string>
     <string name="login_successful">Login successful.</string>
     <string name="user_id">id</string>
+    <string name="user_user">user</string>
     <string name="user_first_name">first_name</string>
     <string name="user_last_name">last_name</string>
     <string name="user_username">username</string>
@@ -54,11 +55,38 @@
     <!-- Strings related to goals -->
     <string name="title">Title</string>
     <string name="description">Description</string>
-    <string name="pick_date">Pick Expected Completion Date</string>
-    <string name="pick_time">Pick Expected Completion Time</string>
+    <string name="pick_date">Expected Completion Date</string>
+    <string name="pick_time">Expected Completion Time</string>
     <string name="create_goal">Create Goal</string>
+    <string name="create_sub_goal">Create Sub Goal</string>
     <string name="cancel_submit_goal">Cancel</string>
+    <string name="empty_title">Please provide a title</string>
+    <string name="empty_description">Please provide a description</string>
+    <string name="goal_id">id</string>
+    <string name="goal_future_goal">future_goal</string>
+    <string name="goal_title">title</string>
+    <string name="goal_description">description</string>
+    <string name="goal_comment">comment</string>
+    <string name="goal_created_at">created_at</string>
+    <string name="goal_expected_completion">expected_completion</string>
+    <string name="goal_finished_at">finished_at</string>
+    <string name="goal_last_modified">last_modified</string>
+    <string name="goal_archived">archived</string>
+    <string name="goals_url">goals/</string>
+    <string name="future_goals_url">goals/get-future-goals/</string>
+    <string name="get_sub_goals_url">get-sub-goals/</string>
+    <string name="add_sub_goal_url">add-sub-goal/</string>
+    <string name="goal_created">Goal created</string>
+    <string name="failed_goal_creation">Failed to create goal</string>
+    <string name="failed_goal_retrieval">Failed to retrieve goals</string>
+    <string name="failed_goal_details_retrieval">Failed to retrieve goal details</string>
+    <string name="goal_details_description">Description</string>
+    <string name="goal_details_comment">Comment</string>
+    <string name="goal_details_expected_completion">Expected Completion</string>
+    <string name="goal_details_sub_goals">Sub Goals</string>
 
     <!-- Strings related to toolbar -->
+    <string name="edit_goal">Edit Goal</string>
+    <string name="delete_goal">Delete Goal</string>
     <string name="logout">Logout</string>
 </resources>

@@ -1,4 +1,4 @@
-package utils;
+package utils.handlers;
 
 import android.content.Context;
 
@@ -14,6 +14,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GMAUrlConnection {
     public enum Method {GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE}

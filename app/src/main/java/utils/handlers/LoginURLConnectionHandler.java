@@ -1,4 +1,4 @@
-package utils;
+package utils.handlers;
 
 import android.content.Intent;
 import android.widget.Toast;
@@ -39,8 +39,7 @@ public class LoginURLConnectionHandler extends HttpURLConnectionHandler {
             // Create a JSONObject to get our data
             try {
                 JSONObject json = new JSONObject(sb.toString());
-                gmaUrlConnection.setToken(
-                        json.getString(gmaUrlConnection.getContext().getString(R.string.user_token)));
+                gmaUrlConnection.setToken(json.getString(gmaUrlConnection.getContext().getString(R.string.user_token)));
                 return success;
             } catch (JSONException e) {
                 System.err.print(e.getMessage());
