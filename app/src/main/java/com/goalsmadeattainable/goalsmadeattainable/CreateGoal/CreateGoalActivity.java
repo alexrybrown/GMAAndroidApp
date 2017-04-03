@@ -41,7 +41,7 @@ public class CreateGoalActivity extends AppCompatActivity {
     private Button createGoalButton, cancelCreateGoalButton;
     private CreateGoalDatePickerFragment datePickerFragment;
     private CreateGoalTimePickerFragment timePickerFragment;
-    private Goal goal;
+    private int goalID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +58,7 @@ public class CreateGoalActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         // If we have a goal then set title different
-        if (goal != null) {
-            toolbar.setTitle("Create " + goal.title + " Sub Goal");
-        } else {
-            toolbar.setTitle("Create Future Goal");
-        }
+        toolbar.setTitle("Create Goal");
         toolbar.inflateMenu(R.menu.menu_main);
 
         inputLayoutTitle = (TextInputLayout) findViewById(R.id.inputLayoutTitle);
@@ -187,11 +183,11 @@ public class CreateGoalActivity extends AppCompatActivity {
             Intent intent;
             DBTools dbTools = new DBTools(this);
             // If we have a future goal use different url
-            if (this.goal != null) {
+            if (goalID != 0) {
                 intent = new Intent(this, GoalDetailsActivity.class);
-                intent.putExtra(getString(R.string.goal_id), this.goal.goalID);
+                intent.putExtra(getString(R.string.goal_id), goalID);
                 gmaUrlConnection = new GMAUrlConnection(
-                        getString(R.string.goals_url) + this.goal.goalID + "/" + getString(R.string.add_sub_goal_url),
+                        getString(R.string.goals_url) + goalID + "/" + getString(R.string.add_sub_goal_url),
                         GMAUrlConnection.Method.POST, params, this, dbTools.getToken());
             } else {
                 intent = new Intent(this, FutureGoalsActivity.class);
@@ -216,9 +212,8 @@ public class CreateGoalActivity extends AppCompatActivity {
     }
 
     private void getGoalDetails() {
-        int goalID = getIntent().getIntExtra(getString(R.string.goal_id), 0);
+        goalID = getIntent().getIntExtra(getString(R.string.goal_id), 0);
         if (goalID != 0) {
-            Goal goal = new Goal();
             DBTools dbTools = new DBTools(this);
             GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
                     getString(R.string.goals_url) + goalID + "/", GMAUrlConnection.Method.GET,
@@ -226,18 +221,8 @@ public class CreateGoalActivity extends AppCompatActivity {
             dbTools.close();
             GoalDetailsURLConnectionHandler handler = new GoalDetailsURLConnectionHandler(
                     "", getString(R.string.failed_goal_details_retrieval),
-                    null, gmaUrlConnection, false, goal);
+                    null, gmaUrlConnection, false, null);
             handler.execute((Void) null);
-            // Sleep while we wait for the data to populate
-            try {
-                synchronized (Thread.currentThread()) {
-                    Thread.currentThread().wait(1000);
-                }
-            } catch (InterruptedException e) {
-            }
-            this.goal = goal;
-        } else {
-            this.goal = null;
         }
     }
 }

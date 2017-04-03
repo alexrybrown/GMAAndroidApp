@@ -1,6 +1,7 @@
 package utils.handlers;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ public class HttpURLConnectionHandler extends AsyncTask<Void, Void, String> {
     protected String failure;
     protected GMAUrlConnection gmaUrlConnection;
     protected Boolean clearStack;
+    protected ProgressDialog progressDialog;
 
 
     public HttpURLConnectionHandler(String success, String failure, Intent intent,
@@ -27,6 +29,17 @@ public class HttpURLConnectionHandler extends AsyncTask<Void, Void, String> {
         this.failure = failure;
         this.gmaUrlConnection = gmaUrlConnection;
         this.clearStack = clearStack;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        progressDialog = new ProgressDialog(gmaUrlConnection.getContext());
+        progressDialog.setCancelable(true);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setProgress(0);
+        progressDialog.show();
     }
 
     // Starts the communication process with the server
@@ -52,6 +65,7 @@ public class HttpURLConnectionHandler extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
+        progressDialog.dismiss();
         if (!result.isEmpty()) {
             Toast.makeText(gmaUrlConnection.getContext(), result, Toast.LENGTH_LONG).show();
         }

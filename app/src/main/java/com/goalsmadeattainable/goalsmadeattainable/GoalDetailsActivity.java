@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.goalsmadeattainable.goalsmadeattainable.CreateGoal.CreateGoalActivity;
 
@@ -25,6 +24,7 @@ import utils.handlers.GoalDetailsURLConnectionHandler;
 import utils.handlers.GoalsURLConnectionHandler;
 
 public class GoalDetailsActivity extends AppCompatActivity {
+    private int goalID;
     private Goal goal;
     private CoordinatorLayout rootLayout;
     private Toolbar toolbar;
@@ -38,7 +38,6 @@ public class GoalDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goal_details);
 
-        getGoalDetails();
         initializeWidgets();
         initializeListeners();
     }
@@ -47,8 +46,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
         rootLayout = (CoordinatorLayout) findViewById(R.id.activity_goal_details);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(goal.title);
-        toolbar.inflateMenu(R.menu.menu_goal_details);
+        getGoalDetails();
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -57,7 +55,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 // Refresh items
-                refreshItems();
+                getSubGoals();
             }
         });
 
@@ -69,9 +67,11 @@ public class GoalDetailsActivity extends AppCompatActivity {
         goalDetailsRecyclerView.setLayoutManager(goalDetailsLayoutManager);
 
         // specify an adapter
-        ArrayList<Goal> goals = getSubGoals();
-        goalDetailsAdapter = new GoalsAdapter(goals);
+        goalDetailsAdapter = new GoalsAdapter(new ArrayList<Goal>());
         goalDetailsRecyclerView.setAdapter(goalDetailsAdapter);
+
+        // initialize goal data
+        getSubGoals();
     }
 
     private void initializeListeners() {
@@ -105,23 +105,8 @@ public class GoalDetailsActivity extends AppCompatActivity {
         });
     }
 
-    // Retrieve new goal data set
-    private void refreshItems() {
-        ArrayList<Goal> goals = getSubGoals();
-        goalDetailsRecyclerView.setAdapter(new GoalsAdapter(goals));
-        onItemsLoadComplete();
-    }
-
-    private void onItemsLoadComplete() {
-        goalDetailsRecyclerView.removeAllViews();
-        goalDetailsAdapter.notifyDataSetChanged();
-        // Stop refresh animation
-        swipeRefreshLayout.setRefreshing(false);
-    }
-
     private void getGoalDetails() {
-        int goalID = getIntent().getExtras().getInt(getString(R.string.goal_id));
-        Goal goal = new Goal();
+        goalID = getIntent().getExtras().getInt(getString(R.string.goal_id));
         DBTools dbTools = new DBTools(this);
         GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
                 getString(R.string.goals_url) + goalID + "/", GMAUrlConnection.Method.GET,
@@ -129,40 +114,26 @@ public class GoalDetailsActivity extends AppCompatActivity {
         dbTools.close();
         GoalDetailsURLConnectionHandler handler = new GoalDetailsURLConnectionHandler(
                 "", getString(R.string.failed_goal_details_retrieval),
-                null, gmaUrlConnection, false, goal);
+                null, gmaUrlConnection, false, toolbar);
         handler.execute((Void) null);
-        // Sleep while we wait for the data to populate
-        try {
-            synchronized (Thread.currentThread()) {
-                Thread.currentThread().wait(1000);
-            }
-        } catch (InterruptedException e) {}
-        this.goal = goal;
     }
 
-    private ArrayList<Goal> getSubGoals() {
+    private void getSubGoals() {
         DBTools dbTools = new DBTools(this);
         GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
-                getString(R.string.goals_url) + goal.goalID + "/" + getString(R.string.get_sub_goals_url),
+                getString(R.string.goals_url) + goalID + "/" + getString(R.string.get_sub_goals_url),
                 GMAUrlConnection.Method.GET, null, this, dbTools.getToken());
         dbTools.close();
-        ArrayList<Goal> goals = new ArrayList<>();
         GoalsURLConnectionHandler handler = new GoalsURLConnectionHandler(
                 "", getString(R.string.failed_goal_retrieval),
-                null, gmaUrlConnection, false, goals);
+                null, gmaUrlConnection, false, goalDetailsRecyclerView, goalDetailsAdapter,
+                swipeRefreshLayout);
         handler.execute((Void) null);
-        // Sleep while we wait for the data to populate
-        try {
-            synchronized (Thread.currentThread()) {
-                Thread.currentThread().wait(1000);
-            }
-        } catch (InterruptedException e) {}
-        return goals;
     }
 
     private void createSubGoal() {
         Intent intent = new Intent(this, CreateGoalActivity.class);
-        intent.putExtra(getString(R.string.goal_id), goal.goalID);
+        intent.putExtra(getString(R.string.goal_id), goalID);
         startActivity(intent);
     }
 }

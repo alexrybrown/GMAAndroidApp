@@ -1,7 +1,12 @@
 package utils.handlers;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
+import com.goalsmadeattainable.goalsmadeattainable.GoalsAdapter;
 import com.goalsmadeattainable.goalsmadeattainable.R;
 
 import org.json.JSONArray;
@@ -18,14 +23,21 @@ import utils.DBTools;
 import utils.Goal;
 
 public class GoalsURLConnectionHandler extends HttpURLConnectionHandler {
-    private ArrayList<Goal> goals;
+    private RecyclerView goalsRecyclerView;
+    private RecyclerView.Adapter goalsAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public GoalsURLConnectionHandler(String success, String failure, Intent intent,
                                      GMAUrlConnection gmaUrlConnection, Boolean clearStack,
-                                     ArrayList<Goal> goals) {
+                                     RecyclerView goalsRecyclerView, RecyclerView.Adapter goalsAdapter,
+                                     SwipeRefreshLayout swipeRefreshLayout) {
         super(success, failure, intent, gmaUrlConnection, clearStack);
-        this.goals = goals;
+        this.goalsRecyclerView = goalsRecyclerView;
+        this.goalsAdapter = goalsAdapter;
+        this.swipeRefreshLayout = swipeRefreshLayout;
     }
+
+    protected void onPreExecute() {}
 
     /**
      * Default method of handling a response.
@@ -46,6 +58,7 @@ public class GoalsURLConnectionHandler extends HttpURLConnectionHandler {
             br.close();
             // Create a JSONArray to get our data
             try {
+                final ArrayList<Goal> goals = new ArrayList<>();
                 JSONArray jsonArray = new JSONArray(sb.toString());
                 DBTools dbTools = new DBTools(gmaUrlConnection.getContext());
                 for(int i = 0; i < jsonArray.length(); ++i) {
@@ -83,28 +96,43 @@ public class GoalsURLConnectionHandler extends HttpURLConnectionHandler {
                     goals.add(goal);
                 }
                 dbTools.close();
+                // Update data in recycler view
+                final Activity activity = (Activity) gmaUrlConnection.getContext();
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        goalsAdapter = new GoalsAdapter(goals);
+                        goalsRecyclerView.removeAllViews();
+                        goalsRecyclerView.setAdapter(goalsAdapter);
+                        goalsAdapter.notifyDataSetChanged();
+                    }
+                });
                 return success;
             } catch (JSONException e) {
                 System.err.print(e.getMessage());
                 return failure;
-            } finally {
-                // Wake up the thread waiting for data
-                synchronized (Thread.currentThread()) {
-                    Thread.currentThread().notify();
-                }
             }
         } else if(responseCode >= 200 && responseCode < 300) {
-            // Wake up the thread waiting for data
-            synchronized (Thread.currentThread()) {
-                Thread.currentThread().notify();
-            }
             return success;
         } else {
-            // Wake up the thread waiting for data
-            synchronized (Thread.currentThread()) {
-                Thread.currentThread().notify();
-            }
             return failure;
+        }
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+        swipeRefreshLayout.setRefreshing(false);
+        if (!result.isEmpty()) {
+            Toast.makeText(gmaUrlConnection.getContext(), result, Toast.LENGTH_LONG).show();
+        }
+        if (result.equals(success)) {
+            if (intent != null) {
+                gmaUrlConnection.getContext().startActivity(intent);
+            }
+            if (clearStack) { // If we want to clear the stack we will finish the activity
+                Activity activity = (Activity) gmaUrlConnection.getContext();
+                activity.finish();
+            }
+
         }
     }
 }

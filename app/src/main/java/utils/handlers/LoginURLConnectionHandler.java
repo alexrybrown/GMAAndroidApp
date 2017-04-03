@@ -54,6 +54,7 @@ public class LoginURLConnectionHandler extends HttpURLConnectionHandler {
 
     @Override
     protected void onPostExecute(String result) {
+        progressDialog.dismiss();
         if(result.equals(success)) {
             gmaUrlConnection.setApiEndpoint(gmaUrlConnection.getContext().getString(R.string.user_info_url)
                     + gmaUrlConnection.getContext().getString(R.string.user_token_info));

@@ -54,7 +54,8 @@ public class FutureGoalsActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 // Refresh items
-                refreshItems();
+                getUpcomingGoals();
+
             }
         });
 
@@ -66,9 +67,11 @@ public class FutureGoalsActivity extends AppCompatActivity {
         futureGoalsRecyclerView.setLayoutManager(futureGoalsLayoutManager);
 
         // specify an adapter
-        ArrayList<Goal> goals = getUpcomingGoals();
-        futureGoalsAdapter = new GoalsAdapter(goals);
+        futureGoalsAdapter = new GoalsAdapter(new ArrayList<Goal>());
         futureGoalsRecyclerView.setAdapter(futureGoalsAdapter);
+
+        // Initialize adapter
+        getUpcomingGoals();
     }
 
     private void initializeListeners() {
@@ -97,39 +100,17 @@ public class FutureGoalsActivity extends AppCompatActivity {
         });
     }
 
-    // Retrieve new goal data set
-    private void refreshItems() {
-        ArrayList<Goal> goals = getUpcomingGoals();
-        futureGoalsRecyclerView.setAdapter(new GoalsAdapter(goals));
-        onItemsLoadComplete();
-    }
-
-    // Finish recycler and adapter notification
-    private void onItemsLoadComplete() {
-        futureGoalsRecyclerView.removeAllViews();
-        futureGoalsAdapter.notifyDataSetChanged();
-        // Stop refresh animation
-        swipeRefreshLayout.setRefreshing(false);
-    }
-
-    private ArrayList<Goal> getUpcomingGoals() {
+    private void getUpcomingGoals() {
         DBTools dbTools = new DBTools(this);
         GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
                 getString(R.string.future_goals_url), GMAUrlConnection.Method.GET,
                 null, this, dbTools.getToken());
         dbTools.close();
-        ArrayList<Goal> goals = new ArrayList<>();
         GoalsURLConnectionHandler handler = new GoalsURLConnectionHandler(
                 "", getString(R.string.failed_goal_retrieval),
-                null, gmaUrlConnection, false, goals);
+                null, gmaUrlConnection, false, futureGoalsRecyclerView, futureGoalsAdapter,
+                swipeRefreshLayout);
         handler.execute((Void) null);
-        // Sleep while we wait for the data to populate
-        try {
-            synchronized (Thread.currentThread()) {
-                Thread.currentThread().wait(1000);
-            }
-        } catch (InterruptedException e) {}
-        return goals;
     }
 
     private void createGoal() {

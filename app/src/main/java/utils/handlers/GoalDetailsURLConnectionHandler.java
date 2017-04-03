@@ -1,6 +1,8 @@
 package utils.handlers;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.support.v7.widget.Toolbar;
 
 import com.goalsmadeattainable.goalsmadeattainable.R;
 
@@ -15,13 +17,13 @@ import java.net.HttpURLConnection;
 import utils.Goal;
 
 public class GoalDetailsURLConnectionHandler extends HttpURLConnectionHandler {
-    private Goal goal;
+    private Toolbar toolbar;
 
     public GoalDetailsURLConnectionHandler(String success, String failure, Intent intent,
                                            GMAUrlConnection gmaUrlConnection, Boolean clearStack,
-                                           Goal goal) {
+                                           Toolbar toolbar) {
         super(success, failure, intent, gmaUrlConnection, clearStack);
-        this.goal = goal;
+        this.toolbar = toolbar;
     }
 
     /**
@@ -43,6 +45,7 @@ public class GoalDetailsURLConnectionHandler extends HttpURLConnectionHandler {
             br.close();
             // Create a JSONObject to get our data
             try {
+                final Goal goal = new Goal();
                 JSONObject json = new JSONObject(sb.toString());
                 // Required fields need no attempts to get data
                 goal.userID = json.getInt(gmaUrlConnection.getContext().getString(R.string.user_user));
@@ -71,27 +74,25 @@ public class GoalDetailsURLConnectionHandler extends HttpURLConnectionHandler {
                 } else {
                     goal.finishedAt = null;
                 }
+                Activity activity = (Activity) gmaUrlConnection.getContext();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (toolbar != null) {
+                            toolbar.setTitle(goal.title);
+                            toolbar.inflateMenu(R.menu.menu_goal_details);
+                        }
+                    }
+                });
                 return success;
             } catch (JSONException e) {
                 System.err.print(e.getMessage());
                 return failure;
             } finally {
-                // Wake up the thread waiting for data
-                synchronized (Thread.currentThread()) {
-                    Thread.currentThread().notify();
-                }
             }
         } else if(responseCode >= 200 && responseCode < 300) {
-            // Wake up the thread waiting for data
-            synchronized (Thread.currentThread()) {
-                Thread.currentThread().notify();
-            }
             return success;
         } else {
-            // Wake up the thread waiting for data
-            synchronized (Thread.currentThread()) {
-                Thread.currentThread().notify();
-            }
             return failure;
         }
     }
