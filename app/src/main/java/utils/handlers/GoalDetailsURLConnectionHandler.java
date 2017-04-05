@@ -20,9 +20,8 @@ public class GoalDetailsURLConnectionHandler extends HttpURLConnectionHandler {
     private Toolbar toolbar;
 
     public GoalDetailsURLConnectionHandler(String success, String failure, Intent intent,
-                                           GMAUrlConnection gmaUrlConnection, Boolean clearStack,
-                                           Toolbar toolbar) {
-        super(success, failure, intent, gmaUrlConnection, clearStack);
+                                           GMAUrlConnection gmaUrlConnection, Toolbar toolbar) {
+        super(success, failure, intent, gmaUrlConnection);
         this.toolbar = toolbar;
     }
 

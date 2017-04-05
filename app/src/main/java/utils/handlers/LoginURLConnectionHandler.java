@@ -15,8 +15,8 @@ import java.net.HttpURLConnection;
 
 public class LoginURLConnectionHandler extends HttpURLConnectionHandler {
     public LoginURLConnectionHandler(String success, String failure, Intent intent,
-                                     GMAUrlConnection gmaUrlConnection, Boolean clearStack) {
-        super(success, failure, intent, gmaUrlConnection, clearStack);
+                                     GMAUrlConnection gmaUrlConnection) {
+        super(success, failure, intent, gmaUrlConnection);
     }
 
     /**
@@ -60,7 +60,7 @@ public class LoginURLConnectionHandler extends HttpURLConnectionHandler {
                     + gmaUrlConnection.getContext().getString(R.string.user_token_info));
             gmaUrlConnection.setMethod(GMAUrlConnection.Method.GET);
             UserInfoURLConnectionHandler handler = new UserInfoURLConnectionHandler(
-                    success, failure, intent, gmaUrlConnection, clearStack);
+                    success, failure, intent, gmaUrlConnection);
             handler.execute((Void) null);
         } else {
             Toast.makeText(gmaUrlConnection.getContext(), result, Toast.LENGTH_LONG).show();

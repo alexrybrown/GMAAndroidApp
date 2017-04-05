@@ -17,8 +17,8 @@ import utils.User;
 
 public class UserInfoURLConnectionHandler extends HttpURLConnectionHandler {
     public UserInfoURLConnectionHandler(String success, String failure, Intent intent,
-                                        GMAUrlConnection gmaUrlConnection, Boolean clearStack) {
-        super(success, failure, intent, gmaUrlConnection, clearStack);
+                                        GMAUrlConnection gmaUrlConnection) {
+        super(success, failure, intent, gmaUrlConnection);
     }
 
     /**

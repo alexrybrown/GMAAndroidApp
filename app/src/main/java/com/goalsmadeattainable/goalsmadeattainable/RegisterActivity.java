@@ -153,7 +153,7 @@ public class RegisterActivity extends AppCompatActivity {
                     params, this, "");
             HttpURLConnectionHandler handler = new HttpURLConnectionHandler(
                     getString(R.string.registration_successful), getString(R.string.failed_to_register), intent,
-                    gmaUrlConnection, true);
+                    gmaUrlConnection);
             // Execute the task and forward to the next activity if successful
             handler.execute((Void) null);
         }

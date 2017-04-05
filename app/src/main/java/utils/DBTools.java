@@ -7,6 +7,7 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.media.session.PlaybackState;
 import android.text.BoringLayout;
 
 import java.util.ArrayList;
@@ -104,34 +105,6 @@ public class DBTools extends SQLiteOpenHelper {
         database.close();
     }
 
-    public void createOrUpdateGoal(Goal goal) throws SQLiteConstraintException {
-        SQLiteDatabase database = this.getWritableDatabase();
-        // Create goal in goal table
-        ContentValues values = new ContentValues();
-        values.put(GOAL_COLUMN_ID, goal.goalID);
-        values.put(GOAL_COLUMN_FUTURE_ID, goal.futureGoalID);
-        values.put(GOAL_COLUMN_TITLE, goal.title);
-        values.put(GOAL_COLUMN_DESCRIPTION, goal.description);
-        values.put(GOAL_COLUMN_COMMENT, goal.comment);
-        values.put(GOAL_COLUMN_CREATED_AT, goal.createdAt);
-        values.put(GOAL_COLUMN_EXPECTED_COMPLETION, goal.expectedCompletion);
-        values.put(GOAL_COLUMN_FINISHED_AT, goal.finishedAt);
-        values.put(GOAL_COLUMN_LAST_MODIFIED, goal.lastModified);
-        values.put(GOAL_COLUMN_ARCHIVED, goal.archived);
-        try {
-            database.insertOrThrow(GOAL_TABLE, null, values);
-            // Create link in user has goal table
-            values = new ContentValues();
-            values.put(USER_HAS_GOALS_COLUMN_USER_ID, goal.userID);
-            values.put(USER_HAS_GOALS_COLUMN_GOAL_ID, goal.goalID);
-            database.insertOrThrow(USER_HAS_GOALS_TABLE, null, values);
-            database.close();
-        } catch (SQLiteConstraintException e) {
-            database.update(GOAL_TABLE, values, GOAL_COLUMN_ID + "=" + goal.goalID, null);
-            database.close();
-        }
-    }
-
     /**
      * Checks to see if a token already exists in the database
      * @param token check this token in database
@@ -218,5 +191,71 @@ public class DBTools extends SQLiteOpenHelper {
         }
         cursor.close();
         return token;
+    }
+
+    /**
+     * Creates or updates the goal
+     * @param goal goal to be updated
+     * @throws SQLiteConstraintException
+     */
+    public void createOrUpdateGoal(Goal goal) throws SQLiteConstraintException {
+        SQLiteDatabase database = this.getWritableDatabase();
+        // Create goal in goal table
+        ContentValues values = new ContentValues();
+        values.put(GOAL_COLUMN_ID, goal.goalID);
+        values.put(GOAL_COLUMN_FUTURE_ID, goal.futureGoalID);
+        values.put(GOAL_COLUMN_TITLE, goal.title);
+        values.put(GOAL_COLUMN_DESCRIPTION, goal.description);
+        values.put(GOAL_COLUMN_COMMENT, goal.comment);
+        values.put(GOAL_COLUMN_CREATED_AT, goal.createdAt);
+        values.put(GOAL_COLUMN_EXPECTED_COMPLETION, goal.expectedCompletion);
+        values.put(GOAL_COLUMN_FINISHED_AT, goal.finishedAt);
+        values.put(GOAL_COLUMN_LAST_MODIFIED, goal.lastModified);
+        values.put(GOAL_COLUMN_ARCHIVED, goal.archived);
+        try {
+            database.insertOrThrow(GOAL_TABLE, null, values);
+            // Create link in user has goal table
+            values = new ContentValues();
+            values.put(USER_HAS_GOALS_COLUMN_USER_ID, goal.userID);
+            values.put(USER_HAS_GOALS_COLUMN_GOAL_ID, goal.goalID);
+            database.insertOrThrow(USER_HAS_GOALS_TABLE, null, values);
+            database.close();
+        } catch (SQLiteConstraintException e) {
+            database.update(GOAL_TABLE, values, GOAL_COLUMN_ID + "=" + goal.goalID, null);
+            database.close();
+        }
+    }
+
+    public Goal getGoal(int goalID) throws SQLiteConstraintException {
+        SQLiteDatabase database = this.getReadableDatabase();
+        // Get the goal from the database
+        Cursor cursor = database.query(GOAL_TABLE, null, GOAL_COLUMN_ID + "=" + goalID,
+                null, null, null, null, null);
+        cursor.moveToLast();
+        Goal goal = new Goal();
+        goal.goalID = cursor.getInt(0);
+        if (cursor.isNull(1)) {
+            goal.futureGoalID = null;
+        } else {
+            goal.futureGoalID = cursor.getInt(1);
+        }
+        goal.title = cursor.getString(2);
+        goal.description = cursor.getString(3);
+        if (cursor.isNull(4)) {
+            goal.comment = null;
+        } else {
+            goal.comment = cursor.getString(4);
+        }
+        goal.createdAt = cursor.getString(5);
+        goal.expectedCompletion = cursor.getString(6);
+        if (cursor.isNull(7)) {
+            goal.finishedAt = null;
+        } else {
+            goal.finishedAt = cursor.getString(7);
+        }
+        goal.lastModified = cursor.getString(8);
+        goal.archived = cursor.getInt(9) == 1;
+        cursor.close();
+        return goal;
     }
 }

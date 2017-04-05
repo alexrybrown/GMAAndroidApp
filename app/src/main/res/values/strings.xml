@@ -58,7 +58,7 @@
     <string name="pick_date">Expected Completion Date</string>
     <string name="pick_time">Expected Completion Time</string>
     <string name="create_goal">Create Goal</string>
-    <string name="create_sub_goal">Create Sub Goal</string>
+    <string name="edit_goal_button">Edit Goal</string>
     <string name="cancel_submit_goal">Cancel</string>
     <string name="empty_title">Please provide a title</string>
     <string name="empty_description">Please provide a description</string>
@@ -78,6 +78,8 @@
     <string name="add_sub_goal_url">add-sub-goal/</string>
     <string name="goal_created">Goal created</string>
     <string name="failed_goal_creation">Failed to create goal</string>
+    <string name="goal_update">Goal Updated</string>
+    <string name="failed_goal_update">Failed to update goal</string>
     <string name="failed_goal_retrieval">Failed to retrieve goals</string>
     <string name="failed_goal_details_retrieval">Failed to retrieve goal details</string>
     <string name="goal_details_description">Description</string>
@@ -86,7 +88,13 @@
     <string name="goal_details_sub_goals">Sub Goals</string>
 
     <!-- Strings related to toolbar -->
+    <string name="view_goal">View Goal</string>
     <string name="edit_goal">Edit Goal</string>
+    <string name="finish_goal">Finish Goal</string>
     <string name="delete_goal">Delete Goal</string>
     <string name="logout">Logout</string>
+
+    <!-- Strings related to intent extras -->
+    <string name="future_goal_id">future_goal_id</string>
+    <string name="edit_goal_id">edit_goal_id</string>
 </resources>

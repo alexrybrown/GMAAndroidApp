@@ -18,17 +18,15 @@ public class HttpURLConnectionHandler extends AsyncTask<Void, Void, String> {
     protected String success;
     protected String failure;
     protected GMAUrlConnection gmaUrlConnection;
-    protected Boolean clearStack;
     protected ProgressDialog progressDialog;
 
 
     public HttpURLConnectionHandler(String success, String failure, Intent intent,
-                                    GMAUrlConnection gmaUrlConnection, Boolean clearStack) {
+                                    GMAUrlConnection gmaUrlConnection) {
         this.intent = intent;
         this.success = success;
         this.failure = failure;
         this.gmaUrlConnection = gmaUrlConnection;
-        this.clearStack = clearStack;
     }
 
     @Override
@@ -67,17 +65,12 @@ public class HttpURLConnectionHandler extends AsyncTask<Void, Void, String> {
     protected void onPostExecute(String result) {
         progressDialog.dismiss();
         if (!result.isEmpty()) {
-            Toast.makeText(gmaUrlConnection.getContext(), result, Toast.LENGTH_LONG).show();
+            Toast.makeText(gmaUrlConnection.getContext(), result, Toast.LENGTH_SHORT).show();
         }
         if (result.equals(success)) {
             if (intent != null) {
                 gmaUrlConnection.getContext().startActivity(intent);
             }
-            if (clearStack) { // If we want to clear the stack we will finish the activity
-                Activity activity = (Activity) gmaUrlConnection.getContext();
-                activity.finish();
-            }
-
         }
     }
 

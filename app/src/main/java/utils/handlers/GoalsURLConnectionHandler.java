@@ -28,10 +28,10 @@ public class GoalsURLConnectionHandler extends HttpURLConnectionHandler {
     private SwipeRefreshLayout swipeRefreshLayout;
 
     public GoalsURLConnectionHandler(String success, String failure, Intent intent,
-                                     GMAUrlConnection gmaUrlConnection, Boolean clearStack,
+                                     GMAUrlConnection gmaUrlConnection,
                                      RecyclerView goalsRecyclerView, RecyclerView.Adapter goalsAdapter,
                                      SwipeRefreshLayout swipeRefreshLayout) {
-        super(success, failure, intent, gmaUrlConnection, clearStack);
+        super(success, failure, intent, gmaUrlConnection);
         this.goalsRecyclerView = goalsRecyclerView;
         this.goalsAdapter = goalsAdapter;
         this.swipeRefreshLayout = swipeRefreshLayout;
@@ -128,11 +128,6 @@ public class GoalsURLConnectionHandler extends HttpURLConnectionHandler {
             if (intent != null) {
                 gmaUrlConnection.getContext().startActivity(intent);
             }
-            if (clearStack) { // If we want to clear the stack we will finish the activity
-                Activity activity = (Activity) gmaUrlConnection.getContext();
-                activity.finish();
-            }
-
         }
     }
 }

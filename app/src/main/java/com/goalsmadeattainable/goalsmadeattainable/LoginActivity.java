@@ -108,16 +108,17 @@ public class LoginActivity extends AppCompatActivity {
 
         if (isValid) {
             // Setup our params for login
-            HashMap<String, String> params = new HashMap<String, String>();
+            HashMap<String, String> params = new HashMap<>();
             params.put(getString(R.string.username), username);
             params.put(getString(R.string.password), password);
             Intent intent = new Intent(this, FutureGoalsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
                     getString(R.string.login_url), GMAUrlConnection.Method.POST,
                     params, this, "");
             LoginURLConnectionHandler handler = new LoginURLConnectionHandler(
                     getString(R.string.login_successful), getString(R.string.failed_to_login),
-                    intent, gmaUrlConnection, true);
+                    intent, gmaUrlConnection);
             handler.execute((Void) null);
         }
     }

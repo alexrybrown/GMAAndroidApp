@@ -13,7 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.goalsmadeattainable.goalsmadeattainable.CreateGoal.CreateGoalActivity;
+import com.goalsmadeattainable.goalsmadeattainable.CreateGoal.EditOrCreateGoalActivity;
 
 import java.util.ArrayList;
 
@@ -108,13 +108,13 @@ public class FutureGoalsActivity extends AppCompatActivity {
         dbTools.close();
         GoalsURLConnectionHandler handler = new GoalsURLConnectionHandler(
                 "", getString(R.string.failed_goal_retrieval),
-                null, gmaUrlConnection, false, futureGoalsRecyclerView, futureGoalsAdapter,
+                null, gmaUrlConnection, futureGoalsRecyclerView, futureGoalsAdapter,
                 swipeRefreshLayout);
         handler.execute((Void) null);
     }
 
     private void createGoal() {
-        Intent intent = new Intent(this, CreateGoalActivity.class);
+        Intent intent = new Intent(this, EditOrCreateGoalActivity.class);
         startActivity(intent);
     }
 }

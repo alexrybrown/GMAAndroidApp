@@ -93,7 +93,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
     // Format dates from database
     private String formatDate(String date) {
         DateFormat finalDateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
-        DateFormat currentDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat currentDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         currentDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         Calendar calendar = Calendar.getInstance();
         try {
