@@ -2,6 +2,7 @@ package com.goalsmadeattainable.goalsmadeattainable.CreateGoal;
 
 import android.app.TimePickerDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -24,6 +25,7 @@ public class EditOrCreateGoalTimePickerFragment extends DialogFragment
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final TimePickerDialog.OnTimeSetListener obj = this;
         final Calendar c = Calendar.getInstance();
         if (timePickerDialog == null) {
             if (EditOrCreateGoalActivity.values.get("edit_goal_time") != null) {
@@ -53,6 +55,20 @@ public class EditOrCreateGoalTimePickerFragment extends DialogFragment
                 updateValues(hour, minute);
             }
         }
+
+        // Rest data on cancel
+        timePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == DialogInterface.BUTTON_NEGATIVE) {
+                    try {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(timeFormat.parse((String) EditOrCreateGoalActivity.values.get("time")));
+                        timePickerDialog = new TimePickerDialog(getActivity(), obj, calendar.get(Calendar.HOUR_OF_DAY),
+                                calendar.get(Calendar.MINUTE), DateFormat.is24HourFormat(getActivity()));
+                    } catch (ParseException e) {}
+                }
+            }
+        });
         return timePickerDialog;
     }
 
@@ -62,7 +78,8 @@ public class EditOrCreateGoalTimePickerFragment extends DialogFragment
     }
 
     private void updateValues(int hourOfDay, int minute) {
-        timePickerDialog.updateTime(hourOfDay, minute);
+        timePickerDialog = new TimePickerDialog(getActivity(), this, hourOfDay, minute,
+                DateFormat.is24HourFormat(getActivity()));
         // Get needed times for time picker buttons
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

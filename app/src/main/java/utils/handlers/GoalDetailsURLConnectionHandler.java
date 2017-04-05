@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
+import utils.DBTools;
 import utils.Goal;
 
 public class GoalDetailsURLConnectionHandler extends HttpURLConnectionHandler {
@@ -79,10 +80,12 @@ public class GoalDetailsURLConnectionHandler extends HttpURLConnectionHandler {
                     public void run() {
                         if (toolbar != null) {
                             toolbar.setTitle(goal.title);
-                            toolbar.inflateMenu(R.menu.menu_goal_details);
                         }
                     }
                 });
+                DBTools dbTools = new DBTools(gmaUrlConnection.getContext());
+                dbTools.createOrUpdateGoal(goal);
+                dbTools.close();
                 return success;
             } catch (JSONException e) {
                 System.err.print(e.getMessage());

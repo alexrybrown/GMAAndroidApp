@@ -17,7 +17,12 @@ import android.view.View;
 
 import com.goalsmadeattainable.goalsmadeattainable.CreateGoal.EditOrCreateGoalActivity;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import utils.DBTools;
 import utils.Goal;
@@ -35,6 +40,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager goalDetailsLayoutManager;
     private FloatingActionButton fab;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goal_details);
@@ -43,11 +49,19 @@ public class GoalDetailsActivity extends AppCompatActivity {
         initializeListeners();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        getGoalDetails();
+        getSubGoals();
+    }
+
     private void initializeWidgets() {
         rootLayout = (CoordinatorLayout) findViewById(R.id.activity_goal_details);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         getGoalDetails();
+        toolbar.inflateMenu(R.menu.menu_goal_details);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -152,8 +166,15 @@ public class GoalDetailsActivity extends AppCompatActivity {
     private void viewGoal() {
         final Activity activity = this;
         final int goalID = this.goalID;
+        DBTools dbTools = new DBTools(this);
+        Goal goal = dbTools.getGoal(this.goalID);
+        dbTools.close();
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("Goal Details");
+        alertDialogBuilder.setTitle(goal.title + " Details");
+        alertDialogBuilder.setMessage(
+                "Title: \n\n" + goal.title + "\n\n"
+                        + "Description: \n\n" + goal.description + "\n\n"
+                        + "Expected Completion: \n\n" + formatDate(goal.expectedCompletion) + "\n\n");
         alertDialogBuilder.setCancelable(false);
         alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
@@ -183,5 +204,19 @@ public class GoalDetailsActivity extends AppCompatActivity {
         Intent intent = new Intent(this, EditOrCreateGoalActivity.class);
         intent.putExtra(this.getString(R.string.edit_goal_id), goalID);
         startActivity(intent);
+    }
+
+    // Format dates from database
+    private String formatDate(String date) {
+        DateFormat finalDateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+        DateFormat currentDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        currentDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(currentDateFormat.parse(date));
+            return finalDateFormat.format(calendar.getTime());
+        } catch (ParseException e) {
+            return date;
+        }
     }
 }

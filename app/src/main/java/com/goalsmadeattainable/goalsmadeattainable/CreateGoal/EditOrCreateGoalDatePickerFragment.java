@@ -2,6 +2,7 @@ package com.goalsmadeattainable.goalsmadeattainable.CreateGoal;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -24,6 +25,7 @@ public class EditOrCreateGoalDatePickerFragment extends DialogFragment
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final DatePickerDialog.OnDateSetListener obj = this;
         final Calendar c = Calendar.getInstance();
         if (datePickerDialog == null) {
             if (EditOrCreateGoalActivity.values.get("edit_goal_time") != null) {
@@ -53,6 +55,20 @@ public class EditOrCreateGoalDatePickerFragment extends DialogFragment
                 updateValues(year, month, day);
             }
         }
+
+        // Rest data on cancel
+        datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == DialogInterface.BUTTON_NEGATIVE) {
+                    try {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(dateFormat.parse((String) EditOrCreateGoalActivity.values.get("date")));
+                        datePickerDialog = new DatePickerDialog(getActivity(), obj, calendar.get(Calendar.YEAR),
+                                calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                    } catch (ParseException e) {}
+                }
+            }
+        });
         return datePickerDialog;
     }
 
@@ -62,7 +78,7 @@ public class EditOrCreateGoalDatePickerFragment extends DialogFragment
     }
 
     private void updateValues(int year, int month, int day) {
-        datePickerDialog.updateDate(year, month, day);
+        datePickerDialog = new DatePickerDialog(getActivity(), this, year, month, day);
         // Get needed times for time picker buttons
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day);

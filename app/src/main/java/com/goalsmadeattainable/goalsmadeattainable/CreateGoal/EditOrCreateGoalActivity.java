@@ -29,6 +29,7 @@ import java.util.TimeZone;
 import utils.DBTools;
 import utils.handlers.GMAUrlConnection;
 import utils.Goal;
+import utils.handlers.GoalPutPostHandler;
 import utils.handlers.HttpURLConnectionHandler;
 
 public class EditOrCreateGoalActivity extends AppCompatActivity {
@@ -215,18 +216,18 @@ public class EditOrCreateGoalActivity extends AppCompatActivity {
             Intent intent;
             DBTools dbTools = new DBTools(this);
             // If we have a future or edit goal use different url
-            if (getIntent().getIntExtra(getString(R.string.goal_id), 0) != 0) {
+            if (getIntent().getIntExtra(getString(R.string.future_goal_id), 0) != 0) {
                 intent = new Intent(this, GoalDetailsActivity.class);
-                intent.putExtra(getString(R.string.future_goal_id), getIntent().getIntExtra(getString(R.string.future_goal_id), 0));
+                intent.putExtra(getString(R.string.goal_id), getIntent().getIntExtra(getString(R.string.future_goal_id), 0));
                 gmaUrlConnection = new GMAUrlConnection(
                         getString(R.string.goals_url) + getIntent().getIntExtra(getString(R.string.future_goal_id), 0)
                                 + "/" + getString(R.string.add_sub_goal_url),
                         GMAUrlConnection.Method.POST, params, this, dbTools.getToken());
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 dbTools.close();
-                HttpURLConnectionHandler handler = new HttpURLConnectionHandler(
+                GoalPutPostHandler handler = new GoalPutPostHandler(
                         getString(R.string.goal_created), getString(R.string.failed_goal_creation),
-                        intent, gmaUrlConnection);
+                        intent, gmaUrlConnection, getIntent().getIntExtra(getString(R.string.future_goal_id), 0));
                 handler.execute((Void) null);
             } else if (getIntent().getIntExtra(getString(R.string.edit_goal_id), 0) != 0) {
                 intent = new Intent(this, GoalDetailsActivity.class);
@@ -236,9 +237,9 @@ public class EditOrCreateGoalActivity extends AppCompatActivity {
                         GMAUrlConnection.Method.PUT, params, this, dbTools.getToken());
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 dbTools.close();
-                HttpURLConnectionHandler handler = new HttpURLConnectionHandler(
+                GoalPutPostHandler handler = new GoalPutPostHandler(
                         getString(R.string.goal_update), getString(R.string.failed_goal_update),
-                        intent, gmaUrlConnection);
+                        intent, gmaUrlConnection, getIntent().getIntExtra(getString(R.string.edit_goal_id), 0));
                 handler.execute((Void) null);
             }
             else {

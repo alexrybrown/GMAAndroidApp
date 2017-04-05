@@ -40,6 +40,12 @@ public class FutureGoalsActivity extends AppCompatActivity {
         initializeListeners();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        getUpcomingGoals();
+    }
+
     private void initializeWidgets() {
         rootLayout = (CoordinatorLayout) findViewById(R.id.activity_future_goals);
 
