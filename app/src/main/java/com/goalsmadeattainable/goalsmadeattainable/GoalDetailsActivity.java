@@ -70,6 +70,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 // Refresh items
+                getGoalDetails();
                 getSubGoals();
             }
         });
