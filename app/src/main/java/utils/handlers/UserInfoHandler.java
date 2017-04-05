@@ -15,9 +15,9 @@ import java.net.HttpURLConnection;
 import utils.DBTools;
 import utils.User;
 
-public class UserInfoURLConnectionHandler extends HttpURLConnectionHandler {
-    public UserInfoURLConnectionHandler(String success, String failure, Intent intent,
-                                        GMAUrlConnection gmaUrlConnection) {
+public class UserInfoHandler extends HttpHandler {
+    public UserInfoHandler(String success, String failure, Intent intent,
+                           GMAUrlConnection gmaUrlConnection) {
         super(success, failure, intent, gmaUrlConnection);
     }
 

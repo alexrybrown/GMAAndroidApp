@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 import java.util.HashMap;
 
 import utils.handlers.GMAUrlConnection;
-import utils.handlers.HttpURLConnectionHandler;
+import utils.handlers.HttpHandler;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -151,7 +151,7 @@ public class RegisterActivity extends AppCompatActivity {
             GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
                     getString(R.string.register_url), GMAUrlConnection.Method.POST,
                     params, this, "");
-            HttpURLConnectionHandler handler = new HttpURLConnectionHandler(
+            HttpHandler handler = new HttpHandler(
                     getString(R.string.registration_successful), getString(R.string.failed_to_register), intent,
                     gmaUrlConnection);
             // Execute the task and forward to the next activity if successful

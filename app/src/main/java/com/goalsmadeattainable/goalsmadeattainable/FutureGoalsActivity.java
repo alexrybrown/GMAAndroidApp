@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import utils.DBTools;
 import utils.Goal;
 import utils.handlers.GMAUrlConnection;
-import utils.handlers.GoalsURLConnectionHandler;
+import utils.handlers.GoalsHandler;
 
 public class FutureGoalsActivity extends AppCompatActivity {
     private CoordinatorLayout rootLayout;
@@ -112,7 +112,7 @@ public class FutureGoalsActivity extends AppCompatActivity {
                 getString(R.string.future_goals_url), GMAUrlConnection.Method.GET,
                 null, this, dbTools.getToken());
         dbTools.close();
-        GoalsURLConnectionHandler handler = new GoalsURLConnectionHandler(
+        GoalsHandler handler = new GoalsHandler(
                 "", getString(R.string.failed_goal_retrieval),
                 null, gmaUrlConnection, futureGoalsRecyclerView, futureGoalsAdapter,
                 swipeRefreshLayout);

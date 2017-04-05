@@ -13,9 +13,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
-public class LoginURLConnectionHandler extends HttpURLConnectionHandler {
-    public LoginURLConnectionHandler(String success, String failure, Intent intent,
-                                     GMAUrlConnection gmaUrlConnection) {
+public class LoginHandler extends HttpHandler {
+    public LoginHandler(String success, String failure, Intent intent,
+                        GMAUrlConnection gmaUrlConnection) {
         super(success, failure, intent, gmaUrlConnection);
     }
 
@@ -59,7 +59,7 @@ public class LoginURLConnectionHandler extends HttpURLConnectionHandler {
             gmaUrlConnection.setApiEndpoint(gmaUrlConnection.getContext().getString(R.string.user_info_url)
                     + gmaUrlConnection.getContext().getString(R.string.user_token_info));
             gmaUrlConnection.setMethod(GMAUrlConnection.Method.GET);
-            UserInfoURLConnectionHandler handler = new UserInfoURLConnectionHandler(
+            UserInfoHandler handler = new UserInfoHandler(
                     success, failure, intent, gmaUrlConnection);
             handler.execute((Void) null);
         } else {

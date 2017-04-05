@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 import utils.DBTools;
 import utils.handlers.GMAUrlConnection;
-import utils.handlers.LoginURLConnectionHandler;
+import utils.handlers.LoginHandler;
 
 /**
  * A login screen that offers login via username/password.
@@ -116,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
             GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
                     getString(R.string.login_url), GMAUrlConnection.Method.POST,
                     params, this, "");
-            LoginURLConnectionHandler handler = new LoginURLConnectionHandler(
+            LoginHandler handler = new LoginHandler(
                     getString(R.string.login_successful), getString(R.string.failed_to_login),
                     intent, gmaUrlConnection);
             handler.execute((Void) null);

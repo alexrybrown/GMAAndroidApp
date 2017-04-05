@@ -22,15 +22,15 @@ import java.util.ArrayList;
 import utils.DBTools;
 import utils.Goal;
 
-public class GoalsURLConnectionHandler extends HttpURLConnectionHandler {
+public class GoalsHandler extends HttpHandler {
     private RecyclerView goalsRecyclerView;
     private RecyclerView.Adapter goalsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    public GoalsURLConnectionHandler(String success, String failure, Intent intent,
-                                     GMAUrlConnection gmaUrlConnection,
-                                     RecyclerView goalsRecyclerView, RecyclerView.Adapter goalsAdapter,
-                                     SwipeRefreshLayout swipeRefreshLayout) {
+    public GoalsHandler(String success, String failure, Intent intent,
+                        GMAUrlConnection gmaUrlConnection,
+                        RecyclerView goalsRecyclerView, RecyclerView.Adapter goalsAdapter,
+                        SwipeRefreshLayout swipeRefreshLayout) {
         super(success, failure, intent, gmaUrlConnection);
         this.goalsRecyclerView = goalsRecyclerView;
         this.goalsAdapter = goalsAdapter;

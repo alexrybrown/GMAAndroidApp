@@ -30,7 +30,7 @@ import utils.DBTools;
 import utils.handlers.GMAUrlConnection;
 import utils.Goal;
 import utils.handlers.GoalPutPostHandler;
-import utils.handlers.HttpURLConnectionHandler;
+import utils.handlers.HttpHandler;
 
 public class EditOrCreateGoalActivity extends AppCompatActivity {
     public static ContentValues values = new ContentValues();
@@ -249,7 +249,7 @@ public class EditOrCreateGoalActivity extends AppCompatActivity {
                         params, this, dbTools.getToken());
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 dbTools.close();
-                HttpURLConnectionHandler handler = new HttpURLConnectionHandler(
+                HttpHandler handler = new HttpHandler(
                         getString(R.string.goal_created), getString(R.string.failed_goal_creation),
                         intent, gmaUrlConnection);
                 handler.execute((Void) null);

@@ -3,27 +3,39 @@ package utils.handlers;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 
 import com.goalsmadeattainable.goalsmadeattainable.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import utils.DBTools;
 import utils.Goal;
 
-public class GoalDetailsURLConnectionHandler extends HttpURLConnectionHandler {
+public class GoalDetailsHandler extends HttpHandler {
     private Toolbar toolbar;
+    private TextView title, description, expectedCompletion;
 
-    public GoalDetailsURLConnectionHandler(String success, String failure, Intent intent,
-                                           GMAUrlConnection gmaUrlConnection, Toolbar toolbar) {
+    public GoalDetailsHandler(String success, String failure, Intent intent,
+                              GMAUrlConnection gmaUrlConnection, Toolbar toolbar, TextView title,
+                              TextView description, TextView expectedCompletion) {
         super(success, failure, intent, gmaUrlConnection);
         this.toolbar = toolbar;
+        this.title = title;
+        this.description = description;
+        this.expectedCompletion = expectedCompletion;
     }
 
     /**
@@ -81,6 +93,15 @@ public class GoalDetailsURLConnectionHandler extends HttpURLConnectionHandler {
                         if (toolbar != null) {
                             toolbar.setTitle(goal.title);
                         }
+                        if (title != null) {
+                            title.setText(goal.title);
+                        }
+                        if (description != null) {
+                            description.setText(goal.description);
+                        }
+                        if (expectedCompletion != null) {
+                            expectedCompletion.setText(formatDate(goal.expectedCompletion));
+                        }
                     }
                 });
                 DBTools dbTools = new DBTools(gmaUrlConnection.getContext());
@@ -96,6 +117,20 @@ public class GoalDetailsURLConnectionHandler extends HttpURLConnectionHandler {
             return success;
         } else {
             return failure;
+        }
+    }
+
+    // Format dates from database
+    private String formatDate(String date) {
+        DateFormat finalDateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+        DateFormat currentDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        currentDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(currentDateFormat.parse(date));
+            return finalDateFormat.format(calendar.getTime());
+        } catch (ParseException e) {
+            return date;
         }
     }
 }

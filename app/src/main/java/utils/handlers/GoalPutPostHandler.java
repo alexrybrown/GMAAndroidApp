@@ -7,7 +7,7 @@ import com.goalsmadeattainable.goalsmadeattainable.R;
 
 import utils.DBTools;
 
-public class GoalPutPostHandler extends HttpURLConnectionHandler {
+public class GoalPutPostHandler extends HttpHandler {
     private int goalID;
 
     public GoalPutPostHandler(String success, String failure, Intent intent,
@@ -25,9 +25,9 @@ public class GoalPutPostHandler extends HttpURLConnectionHandler {
                 context.getString(R.string.goals_url) + goalID + "/", GMAUrlConnection.Method.GET,
                 null, context, dbTools.getToken());
         dbTools.close();
-        GoalDetailsURLConnectionHandler handler = new GoalDetailsURLConnectionHandler(
+        GoalDetailsHandler handler = new GoalDetailsHandler(
                 "", context.getString(R.string.failed_goal_details_retrieval),
-                this.intent, gmaUrlConnection, null);
+                this.intent, gmaUrlConnection, null, null, null, null);
         handler.execute((Void) null);
     }
 }

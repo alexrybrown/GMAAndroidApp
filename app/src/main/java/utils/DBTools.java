@@ -117,6 +117,7 @@ public class DBTools extends SQLiteOpenHelper {
                                        null, null, null, null, null);
         Boolean status = cursor.getCount() > 0;
         cursor.close();
+        database.close();
         return status;
     }
 
@@ -126,6 +127,7 @@ public class DBTools extends SQLiteOpenHelper {
                                        null, null, null, null, null);
         Boolean status = cursor.getCount() > 0;
         cursor.close();
+        database.close();
         return status;
     }
 
@@ -148,6 +150,7 @@ public class DBTools extends SQLiteOpenHelper {
         user.email = cursor.getString(4);
         user.token = cursor.getString(5);
         cursor.close();
+        database.close();
         return user;
     }
 
@@ -160,6 +163,7 @@ public class DBTools extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(USER_COLUMN_ACTIVE, 1);
         database.update(USER_TABLE, values, USER_COLUMN_TOKEN + "='" + token + "'", null);
+        database.close();
     }
 
     /**
@@ -170,6 +174,7 @@ public class DBTools extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(USER_COLUMN_ACTIVE, 0);
         database.update(USER_TABLE, values, USER_COLUMN_ACTIVE + "=1", null);
+        database.close();
     }
 
     /**
@@ -186,11 +191,14 @@ public class DBTools extends SQLiteOpenHelper {
         String token;
         try {
             token = cursor.getString(5);
+            return token;
         } catch (CursorIndexOutOfBoundsException e) {
             token = "";
+            return token;
+        } finally {
+            cursor.close();
+            database.close();
         }
-        cursor.close();
-        return token;
     }
 
     /**
@@ -219,43 +227,157 @@ public class DBTools extends SQLiteOpenHelper {
             values.put(USER_HAS_GOALS_COLUMN_USER_ID, goal.userID);
             values.put(USER_HAS_GOALS_COLUMN_GOAL_ID, goal.goalID);
             database.insertOrThrow(USER_HAS_GOALS_TABLE, null, values);
-            database.close();
         } catch (SQLiteConstraintException e) {
             database.update(GOAL_TABLE, values, GOAL_COLUMN_ID + "=" + goal.goalID, null);
+        } finally {
             database.close();
         }
     }
 
+    /**
+     * Gets the goal for the given goal id if it is not archived
+     * @param goalID goalID for goal
+     * @return given goal object representing goal in database
+     * @throws SQLiteConstraintException
+     */
     public Goal getGoal(int goalID) throws SQLiteConstraintException {
         SQLiteDatabase database = this.getReadableDatabase();
         // Get the goal from the database
-        Cursor cursor = database.query(GOAL_TABLE, null, GOAL_COLUMN_ID + "=" + goalID,
+        Cursor cursor = database.query(GOAL_TABLE, null,
+                GOAL_COLUMN_ID + "=" + goalID + " AND " + GOAL_COLUMN_ARCHIVED + "=0",
                 null, null, null, null, null);
-        cursor.moveToLast();
-        Goal goal = new Goal();
-        goal.goalID = cursor.getInt(0);
-        if (cursor.isNull(1)) {
-            goal.futureGoalID = null;
-        } else {
-            goal.futureGoalID = cursor.getInt(1);
+        try {
+            if (cursor.getCount() > 0) {
+                cursor.moveToLast();
+                Goal goal = new Goal();
+                goal.goalID = cursor.getInt(0);
+                if (cursor.isNull(1)) {
+                    goal.futureGoalID = null;
+                } else {
+                    goal.futureGoalID = cursor.getInt(1);
+                }
+                goal.title = cursor.getString(2);
+                goal.description = cursor.getString(3);
+                if (cursor.isNull(4)) {
+                    goal.comment = null;
+                } else {
+                    goal.comment = cursor.getString(4);
+                }
+                goal.createdAt = cursor.getString(5);
+                goal.expectedCompletion = cursor.getString(6);
+                if (cursor.isNull(7)) {
+                    goal.finishedAt = null;
+                } else {
+                    goal.finishedAt = cursor.getString(7);
+                }
+                goal.lastModified = cursor.getString(8);
+                goal.archived = cursor.getInt(9) == 1;
+                return goal;
+            } else {
+                return new Goal();
+            }
+        } finally {
+            cursor.close();
+            database.close();
         }
-        goal.title = cursor.getString(2);
-        goal.description = cursor.getString(3);
-        if (cursor.isNull(4)) {
-            goal.comment = null;
-        } else {
-            goal.comment = cursor.getString(4);
+    }
+
+    /**
+     * Checks to see if the given goal has sub goals
+     * @param goalID goalID for goal
+     * @return true or false depending on whether or not this goal has sub goals
+     * @throws SQLiteConstraintException
+     */
+    public Boolean hasSubGoals(int goalID) throws SQLiteConstraintException {
+        SQLiteDatabase database = this.getReadableDatabase();
+        // Get the goal from the database
+        Cursor cursor = database.query(GOAL_TABLE, null,
+                GOAL_COLUMN_FUTURE_ID + "=" + goalID + " AND " + GOAL_COLUMN_ARCHIVED + "=0",
+                null, null, null, null, null);
+        try {
+            return cursor.getCount() > 0;
+        } finally {
+            cursor.close();
+            database.close();
         }
-        goal.createdAt = cursor.getString(5);
-        goal.expectedCompletion = cursor.getString(6);
-        if (cursor.isNull(7)) {
-            goal.finishedAt = null;
-        } else {
-            goal.finishedAt = cursor.getString(7);
+    }
+
+    /**
+     * Gets the sub goals for the given goal id that are not archived
+     * @param goalID goalID for goal
+     * @return array list of sub goals
+     * @throws SQLiteConstraintException
+     */
+    public ArrayList<Goal> getSubGoals(int goalID) throws SQLiteConstraintException {
+        SQLiteDatabase database = this.getReadableDatabase();
+        // Get the goal from the database
+        Cursor cursor = database.query(GOAL_TABLE, null,
+                GOAL_COLUMN_FUTURE_ID + "=" + goalID + " AND " + GOAL_COLUMN_ARCHIVED + "=0",
+                null, null, null, null, null);
+        ArrayList<Goal> goals = new ArrayList<>();
+        try {
+            while (cursor.moveToNext()) {
+                Goal goal = new Goal();
+                goal.goalID = cursor.getInt(0);
+                if (cursor.isNull(1)) {
+                    goal.futureGoalID = null;
+                } else {
+                    goal.futureGoalID = cursor.getInt(1);
+                }
+                goal.title = cursor.getString(2);
+                goal.description = cursor.getString(3);
+                if (cursor.isNull(4)) {
+                    goal.comment = null;
+                } else {
+                    goal.comment = cursor.getString(4);
+                }
+                goal.createdAt = cursor.getString(5);
+                goal.expectedCompletion = cursor.getString(6);
+                if (cursor.isNull(7)) {
+                    goal.finishedAt = null;
+                } else {
+                    goal.finishedAt = cursor.getString(7);
+                }
+                goal.lastModified = cursor.getString(8);
+                goal.archived = cursor.getInt(9) == 1;
+                goals.add(goal);
+            }
+            return goals;
+        } finally {
+            cursor.close();
+            database.close();
         }
-        goal.lastModified = cursor.getString(8);
-        goal.archived = cursor.getInt(9) == 1;
-        cursor.close();
-        return goal;
+    }
+
+    /**
+     * Archives the goal and all sub goals for the given goal id
+     * @param goalID goalID for goal
+     * @throws SQLiteConstraintException
+     */
+    public void archiveGoal(int goalID, DBTools dbTools) {
+        // Archive goal
+        Goal goal = getGoal(goalID);
+        goal.archived = true;
+        dbTools.createOrUpdateGoal(goal);
+        // Archive sub_goals
+        dbTools.archiveGoalHelper(goal, dbTools);
+    }
+
+    /**
+     * Helper to archive the given goal
+     * @param goal goal to archive
+     */
+    private void archiveGoalHelper(Goal goal, DBTools dbTools) {
+        ArrayList<Goal> goals = dbTools.getSubGoals(goal.goalID);
+        for (Goal sub_goal : goals) {
+            // Change archive status to true and update goal
+            sub_goal.archived = true;
+            dbTools.createOrUpdateGoal(sub_goal);
+            // Get the sub_goal sub_goals and recursive call helper
+            ArrayList<Goal> sub_goals = dbTools.getSubGoals(sub_goal.goalID);
+            for (Goal sub_sub_goal : sub_goals) {
+                dbTools.archiveGoalHelper(sub_sub_goal, dbTools);
+            }
+        }
     }
 }

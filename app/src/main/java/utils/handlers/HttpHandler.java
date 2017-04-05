@@ -12,7 +12,7 @@ import java.net.HttpURLConnection;
 /**
  * Task will run communications to server through async task
  */
-public class HttpURLConnectionHandler extends AsyncTask<Void, Void, String> {
+public class HttpHandler extends AsyncTask<Void, Void, String> {
     protected int responseCode = 0;
     protected Intent intent;
     protected String success;
@@ -21,8 +21,8 @@ public class HttpURLConnectionHandler extends AsyncTask<Void, Void, String> {
     protected ProgressDialog progressDialog;
 
 
-    public HttpURLConnectionHandler(String success, String failure, Intent intent,
-                                    GMAUrlConnection gmaUrlConnection) {
+    public HttpHandler(String success, String failure, Intent intent,
+                       GMAUrlConnection gmaUrlConnection) {
         this.intent = intent;
         this.success = success;
         this.failure = failure;

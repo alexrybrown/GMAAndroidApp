@@ -76,19 +76,23 @@
     <string name="future_goals_url">goals/get-future-goals/</string>
     <string name="get_sub_goals_url">get-sub-goals/</string>
     <string name="add_sub_goal_url">add-sub-goal/</string>
+    <string name="archive_goal_url">archive/</string>
     <string name="goal_created">Goal created</string>
     <string name="failed_goal_creation">Failed to create goal</string>
     <string name="goal_update">Goal Updated</string>
     <string name="failed_goal_update">Failed to update goal</string>
     <string name="failed_goal_retrieval">Failed to retrieve goals</string>
     <string name="failed_goal_details_retrieval">Failed to retrieve goal details</string>
+    <string name="failed_goal_archive">Failed to archive goal</string>
+    <string name="goal_details_title">Title</string>
     <string name="goal_details_description">Description</string>
     <string name="goal_details_comment">Comment</string>
     <string name="goal_details_expected_completion">Expected Completion</string>
     <string name="goal_details_sub_goals">Sub Goals</string>
 
     <!-- Strings related to toolbar -->
-    <string name="view_goal">View Goal</string>
+    <string name="view_goal">View Goal Details</string>
+    <string name="hide_goal">View Sub Goal Details</string>
     <string name="edit_goal">Edit Goal</string>
     <string name="finish_goal">Finish Goal</string>
     <string name="delete_goal">Delete Goal</string>
