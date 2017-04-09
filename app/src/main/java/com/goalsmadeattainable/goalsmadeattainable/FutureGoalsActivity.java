@@ -115,7 +115,7 @@ public class FutureGoalsActivity extends AppCompatActivity {
         GoalsHandler handler = new GoalsHandler(
                 "", getString(R.string.failed_goal_retrieval),
                 null, gmaUrlConnection, futureGoalsRecyclerView, futureGoalsAdapter,
-                swipeRefreshLayout);
+                swipeRefreshLayout, null);
         handler.execute((Void) null);
     }
 

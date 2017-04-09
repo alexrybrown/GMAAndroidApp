@@ -63,7 +63,7 @@ public class HttpHandler extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        progressDialog.dismiss();
+        clearProgressDialog();
         if (!result.isEmpty()) {
             Toast.makeText(gmaUrlConnection.getContext(), result, Toast.LENGTH_SHORT).show();
         }
@@ -86,5 +86,10 @@ public class HttpHandler extends AsyncTask<Void, Void, String> {
         } else {
             return failure;
         }
+    }
+
+    protected void clearProgressDialog() {
+        progressDialog.dismiss();
+        progressDialog = null;
     }
 }

@@ -6,6 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.goalsmadeattainable.goalsmadeattainable.GoalDetailsActivity;
 import com.goalsmadeattainable.goalsmadeattainable.GoalsAdapter;
 import com.goalsmadeattainable.goalsmadeattainable.R;
 
@@ -26,15 +27,17 @@ public class GoalsHandler extends HttpHandler {
     private RecyclerView goalsRecyclerView;
     private RecyclerView.Adapter goalsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private GoalDetailsActivity goalDetailsActivity;
 
     public GoalsHandler(String success, String failure, Intent intent,
                         GMAUrlConnection gmaUrlConnection,
                         RecyclerView goalsRecyclerView, RecyclerView.Adapter goalsAdapter,
-                        SwipeRefreshLayout swipeRefreshLayout) {
+                        SwipeRefreshLayout swipeRefreshLayout, GoalDetailsActivity goalDetailsActivity) {
         super(success, failure, intent, gmaUrlConnection);
         this.goalsRecyclerView = goalsRecyclerView;
         this.goalsAdapter = goalsAdapter;
         this.swipeRefreshLayout = swipeRefreshLayout;
+        this.goalDetailsActivity = goalDetailsActivity;
     }
 
     protected void onPreExecute() {}
@@ -104,6 +107,11 @@ public class GoalsHandler extends HttpHandler {
                         goalsRecyclerView.removeAllViews();
                         goalsRecyclerView.setAdapter(goalsAdapter);
                         goalsAdapter.notifyDataSetChanged();
+                        if (goalDetailsActivity != null) {
+                            if (goals.size() > 0) {
+                                goalDetailsActivity.viewSubGoals();
+                            }
+                        }
                     }
                 });
                 return success;

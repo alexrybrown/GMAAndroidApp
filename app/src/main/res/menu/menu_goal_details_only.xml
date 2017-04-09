@@ -11,10 +11,10 @@
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/swap"
+        android:id="@+id/complete_goal"
         android:orderInCategory="2"
-        android:title="@string/swap_to_sub_goals"
-        android:icon="@drawable/ic_swap_horiz_black_24dp"
+        android:title="@string/finish_goal"
+        android:icon="@drawable/ic_done_black_24dp"
         app:showAsAction="ifRoom"/>
 
     <item

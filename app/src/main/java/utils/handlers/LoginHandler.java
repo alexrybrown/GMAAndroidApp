@@ -54,7 +54,6 @@ public class LoginHandler extends HttpHandler {
 
     @Override
     protected void onPostExecute(String result) {
-        progressDialog.dismiss();
         if(result.equals(success)) {
             gmaUrlConnection.setApiEndpoint(gmaUrlConnection.getContext().getString(R.string.user_info_url)
                     + gmaUrlConnection.getContext().getString(R.string.user_token_info));
@@ -65,5 +64,6 @@ public class LoginHandler extends HttpHandler {
         } else {
             Toast.makeText(gmaUrlConnection.getContext(), result, Toast.LENGTH_LONG).show();
         }
+        clearProgressDialog();
     }
 }

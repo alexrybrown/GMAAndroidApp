@@ -9,11 +9,11 @@ import java.net.HttpURLConnection;
 
 import utils.DBTools;
 
-public class GoalArchiveHandler extends HttpHandler {
+public class GoalCompleteHandler extends HttpHandler {
     private int goalID;
     private Integer futureGoalID;
 
-    public GoalArchiveHandler(String success, String failure, Intent intent,
+    public GoalCompleteHandler(String success, String failure, Intent intent,
                               GMAUrlConnection gmaUrlConnection, int goalID,
                               Integer futureGoalID) {
         super(success, failure, intent, gmaUrlConnection);
@@ -30,7 +30,7 @@ public class GoalArchiveHandler extends HttpHandler {
     protected String handleResponse(HttpURLConnection conn) throws IOException {
         if(responseCode == HttpURLConnection.HTTP_OK) {
             DBTools dbTools = new DBTools(gmaUrlConnection.getContext());
-            dbTools.archiveGoal(goalID, dbTools);
+            dbTools.completeGoal(goalID, dbTools);
             final GoalDetailsActivity activity = (GoalDetailsActivity) gmaUrlConnection.getContext();
             if (futureGoalID != null) {
                 final Boolean hasSubGoals = dbTools.hasSubGoals(futureGoalID);

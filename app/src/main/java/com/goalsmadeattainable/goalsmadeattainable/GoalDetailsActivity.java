@@ -25,8 +25,10 @@ import utils.DBTools;
 import utils.Goal;
 import utils.handlers.GMAUrlConnection;
 import utils.handlers.GoalArchiveHandler;
+import utils.handlers.GoalCompleteHandler;
 import utils.handlers.GoalDetailsHandler;
 import utils.handlers.GoalsHandler;
+import utils.handlers.HttpHandler;
 
 public class GoalDetailsActivity extends AppCompatActivity {
     private int goalID;
@@ -48,13 +50,6 @@ public class GoalDetailsActivity extends AppCompatActivity {
         goalID = getIntent().getIntExtra(getString(R.string.goal_id), 0);
         initializeWidgets();
         initializeListeners();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        getGoalDetails();
-        getSubGoals();
     }
 
     private void initializeWidgets() {
@@ -91,18 +86,18 @@ public class GoalDetailsActivity extends AppCompatActivity {
         goalDetailsAdapter = new GoalsAdapter(new ArrayList<Goal>());
         goalDetailsRecyclerView.setAdapter(goalDetailsAdapter);
 
+        // initialize goal data
+        getGoalDetails();
+        getSubGoals();
+
         // If we have sub goals set detail layout invisible and recycler view visible or vice versa
         DBTools dbTools = new DBTools(this);
         if (dbTools.hasSubGoals(goalID)) {
             viewSubGoals();
         } else {
-            viewGoal();
+            viewGoalOnly();
         }
         dbTools.close();
-
-        // initialize goal data
-        getGoalDetails();
-        getSubGoals();
     }
 
     private void initializeListeners() {
@@ -130,13 +125,13 @@ public class GoalDetailsActivity extends AppCompatActivity {
     private void getSubGoals() {
         DBTools dbTools = new DBTools(this);
         GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
-                getString(R.string.goals_url) + goalID + "/" + getString(R.string.get_sub_goals_url),
+                getString(R.string.goals_url) + goalID + "/" + getString(R.string.sub_goals_url),
                 GMAUrlConnection.Method.GET, null, this, dbTools.getToken());
         dbTools.close();
         GoalsHandler handler = new GoalsHandler(
                 "", getString(R.string.failed_goal_retrieval),
                 null, gmaUrlConnection, goalDetailsRecyclerView, goalDetailsAdapter,
-                swipeRefreshLayout);
+                swipeRefreshLayout, this);
         handler.execute((Void) null);
     }
 
@@ -146,26 +141,27 @@ public class GoalDetailsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // Switch view to see goal details
-    private void viewGoal() {
-        swipeRefreshLayout.setVisibility(View.GONE);
-        detailLayout.setVisibility(View.VISIBLE);
+    // Switch view to see sub goals
+    public void viewSubGoals() {
+        swipeRefreshLayout.setVisibility(View.VISIBLE);
+        detailLayout.setVisibility(View.GONE);
         toolbar.getMenu().clear();
-        toolbar.inflateMenu(R.menu.menu_goal_details);
+        toolbar.inflateMenu(R.menu.menu_goal_sub_goals);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.view_goal:
-                        viewSubGoals();
-                        break;
                     case R.id.edit_goal:
                         editGoal();
                         break;
-                    case R.id.finish_goal:
+                    case R.id.swap:
+                        viewGoal();
                         break;
                     case R.id.delete_goal:
                         confirmArchiveGoal();
+                        break;
+                    case R.id.jump_to_future_goals:
+                        jumpToFutureGoals();
                         break;
                     case R.id.logout:
                         logout();
@@ -176,26 +172,58 @@ public class GoalDetailsActivity extends AppCompatActivity {
         });
     }
 
-    // Switch view to see sub goals
-    private void viewSubGoals() {
-        swipeRefreshLayout.setVisibility(View.VISIBLE);
-        detailLayout.setVisibility(View.GONE);
+    // Switch view to see goal details and allow viewing of sub goals
+    private void viewGoal() {
+        swipeRefreshLayout.setVisibility(View.GONE);
+        detailLayout.setVisibility(View.VISIBLE);
         toolbar.getMenu().clear();
-        toolbar.inflateMenu(R.menu.menu_goal_sub_goals);
+        toolbar.inflateMenu(R.menu.menu_goal_details);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.view_goal:
-                        viewGoal();
-                        break;
                     case R.id.edit_goal:
                         editGoal();
                         break;
-                    case R.id.finish_goal:
+                    case R.id.swap:
+                        viewSubGoals();
                         break;
                     case R.id.delete_goal:
                         confirmArchiveGoal();
+                        break;
+                    case R.id.jump_to_future_goals:
+                        jumpToFutureGoals();
+                        break;
+                    case R.id.logout:
+                        logout();
+                        break;
+                }
+                return false;
+            }
+        });
+    }
+
+    // Switch view to see goal details only
+    public void viewGoalOnly() {
+        swipeRefreshLayout.setVisibility(View.GONE);
+        detailLayout.setVisibility(View.VISIBLE);
+        toolbar.getMenu().clear();
+        toolbar.inflateMenu(R.menu.menu_goal_details_only);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.edit_goal:
+                        editGoal();
+                        break;
+                    case R.id.complete_goal:
+                        confirmCompleteGoal();
+                        break;
+                    case R.id.delete_goal:
+                        confirmArchiveGoal();
+                        break;
+                    case R.id.jump_to_future_goals:
+                        jumpToFutureGoals();
                         break;
                     case R.id.logout:
                         logout();
@@ -219,7 +247,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
         // Confirm archive
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle("Confirm Delete");
-        alertDialogBuilder.setMessage("Are you sure you want to delete this goal and all of its sub goals?");
+        alertDialogBuilder.setMessage("Are you sure you want to delete this goal and any sub goals it might have?");
         alertDialogBuilder.setCancelable(false);
         alertDialogBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             @Override
@@ -241,29 +269,91 @@ public class GoalDetailsActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    // Archive given goal
+    // Confirm completed given goal in activity
+    private void confirmCompleteGoal() {
+        // Confirm complete
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Confirm Completed");
+        alertDialogBuilder.setMessage("Have you completed this goal?");
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton("Complete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // complete the goal
+                completeGoal();
+            }
+        });
+        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Do nothing
+            }
+        });
+
+        // create the box
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        // show it
+        alertDialog.show();
+    }
+
+    // Archive the given goal
     private void archiveGoal() {
         DBTools dbTools = new DBTools(this);
         Goal goal = dbTools.getGoal(this.goalID);
         // Setup redirect to different activity
         Intent intent;
-        GMAUrlConnection gmaUrlConnection;
         // Check and see if our goal we archived had a future goal
         if (goal.futureGoalID != null) {
+            dbTools = new DBTools(this);
             Goal futureGoal = dbTools.getGoal(goal.futureGoalID);
             intent = new Intent(this, GoalDetailsActivity.class);
             intent.putExtra(getString(R.string.goal_id), futureGoal.goalID);
         } else { // Redirect them to the future goals activity
             intent = new Intent(this, FutureGoalsActivity.class);
         }
-        gmaUrlConnection = new GMAUrlConnection(
+        dbTools.close();
+        // Clear the stack and remove this activity from the stack
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
                 getString(R.string.goals_url) + goal.goalID + "/" + getString(R.string.archive_goal_url),
                 GMAUrlConnection.Method.POST, null, this, dbTools.getToken());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         GoalArchiveHandler handler = new GoalArchiveHandler("",
-                getString(R.string.failed_goal_archive), intent, gmaUrlConnection, goal.goalID);
+                getString(R.string.failed_goal_archive), intent, gmaUrlConnection, goal.goalID, goal.futureGoalID);
+        this.finish();
         handler.execute((Void) null);
+    }
+
+    // Complete the given goal
+    private void completeGoal() {
+        DBTools dbTools = new DBTools(this);
+        Goal goal = dbTools.getGoal(this.goalID);
+        // Setup redirect to different activity
+        Intent intent;
+        // Check and see if our goal we completed had a future goal
+        if (goal.futureGoalID != null) {
+            dbTools = new DBTools(this);
+            Goal futureGoal = dbTools.getGoal(goal.futureGoalID);
+            intent = new Intent(this, GoalDetailsActivity.class);
+            intent.putExtra(getString(R.string.goal_id), futureGoal.goalID);
+        } else { // Redirect them to the future goals activity
+            intent = new Intent(this, FutureGoalsActivity.class);
+        }
         dbTools.close();
+        // Clear the stack and remove this activity from the stack
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
+                getString(R.string.goals_url) + goal.goalID + "/" + getString(R.string.complete_goal_url),
+                GMAUrlConnection.Method.POST, null, this, dbTools.getToken());
+        GoalCompleteHandler handler = new GoalCompleteHandler("",
+                getString(R.string.failed_goal_archive), intent, gmaUrlConnection, goal.goalID, goal.futureGoalID);
+        this.finish();
+        handler.execute((Void) null);
+    }
+
+    // Jump to future goal screen
+    private void jumpToFutureGoals() {
+        Intent intent = new Intent(this, FutureGoalsActivity.class);
+        startActivity(intent);
     }
 
     // Remove active users from the database and redirect to login page

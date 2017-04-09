@@ -1,7 +1,9 @@
 package com.goalsmadeattainable.goalsmadeattainable.CreateGoal;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -207,6 +209,37 @@ public class EditOrCreateGoalActivity extends AppCompatActivity {
             inputLayoutDescription.setErrorEnabled(false);
         }
 
+        // If we have a future goal make sure this goal comes before the future goal
+        if (getIntent().getIntExtra(getString(R.string.future_goal_id), 0) != 0) {
+            int futureGoalID = getIntent().getExtras().getInt(getString(R.string.future_goal_id));
+            DBTools dbTools = new DBTools(this);
+            Goal futureGoal = dbTools.getGoal(futureGoalID);
+            dbTools.close();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            try {
+                Date newExpectedCompletion = dateFormat.parse(goal.expectedCompletion);
+                Date futureExpectedCompletion = dateFormat.parse(futureGoal.expectedCompletion);
+
+                if (futureExpectedCompletion.compareTo(newExpectedCompletion) < 0) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                    alertDialogBuilder.setTitle("Expected Completion Error");
+                    alertDialogBuilder.setMessage("Expected completion of sub goal needs to come before the expected completion of your future goal.");
+                    alertDialogBuilder.setCancelable(false);
+                    alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // Do nothing
+                        }
+                    });
+                    // create the box
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    // show it
+                    alertDialog.show();
+                    isValid = false;
+                }
+            } catch (ParseException e) {}
+        }
+
         if(isValid) {
             HashMap<String, String> params = new HashMap<>();
             params.put(getString(R.string.goal_title), goal.title);
@@ -221,13 +254,14 @@ public class EditOrCreateGoalActivity extends AppCompatActivity {
                 intent.putExtra(getString(R.string.goal_id), getIntent().getIntExtra(getString(R.string.future_goal_id), 0));
                 gmaUrlConnection = new GMAUrlConnection(
                         getString(R.string.goals_url) + getIntent().getIntExtra(getString(R.string.future_goal_id), 0)
-                                + "/" + getString(R.string.add_sub_goal_url),
+                                + "/" + getString(R.string.sub_goals_url),
                         GMAUrlConnection.Method.POST, params, this, dbTools.getToken());
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 dbTools.close();
                 GoalPutPostHandler handler = new GoalPutPostHandler(
                         getString(R.string.goal_created), getString(R.string.failed_goal_creation),
                         intent, gmaUrlConnection, getIntent().getIntExtra(getString(R.string.future_goal_id), 0));
+                this.finish();
                 handler.execute((Void) null);
             } else if (getIntent().getIntExtra(getString(R.string.edit_goal_id), 0) != 0) {
                 intent = new Intent(this, GoalDetailsActivity.class);
@@ -240,6 +274,7 @@ public class EditOrCreateGoalActivity extends AppCompatActivity {
                 GoalPutPostHandler handler = new GoalPutPostHandler(
                         getString(R.string.goal_update), getString(R.string.failed_goal_update),
                         intent, gmaUrlConnection, getIntent().getIntExtra(getString(R.string.edit_goal_id), 0));
+                this.finish();
                 handler.execute((Void) null);
             }
             else {
@@ -252,6 +287,7 @@ public class EditOrCreateGoalActivity extends AppCompatActivity {
                 HttpHandler handler = new HttpHandler(
                         getString(R.string.goal_created), getString(R.string.failed_goal_creation),
                         intent, gmaUrlConnection);
+                this.finish();
                 handler.execute((Void) null);
             }
         }

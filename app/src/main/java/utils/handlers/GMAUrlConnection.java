@@ -53,7 +53,7 @@ public class GMAUrlConnection {
             }
 
             // If we are posting, send params to server
-            if (this.method == Method.POST || this.method == Method.PUT) {
+            if ((this.method == Method.POST || this.method == Method.PUT) && params != null) {
                 conn.setDoOutput(true);
                 OutputStream os = conn.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));

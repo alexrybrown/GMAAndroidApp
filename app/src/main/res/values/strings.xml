@@ -73,10 +73,10 @@
     <string name="goal_last_modified">last_modified</string>
     <string name="goal_archived">archived</string>
     <string name="goals_url">goals/</string>
-    <string name="future_goals_url">goals/get-future-goals/</string>
-    <string name="get_sub_goals_url">get-sub-goals/</string>
-    <string name="add_sub_goal_url">add-sub-goal/</string>
+    <string name="future_goals_url">goals/future-goals/</string>
+    <string name="sub_goals_url">sub-goals/</string>
     <string name="archive_goal_url">archive/</string>
+    <string name="complete_goal_url">complete/</string>
     <string name="goal_created">Goal created</string>
     <string name="failed_goal_creation">Failed to create goal</string>
     <string name="goal_update">Goal Updated</string>
@@ -91,11 +91,12 @@
     <string name="goal_details_sub_goals">Sub Goals</string>
 
     <!-- Strings related to toolbar -->
-    <string name="view_goal">View Goal Details</string>
-    <string name="hide_goal">View Sub Goal Details</string>
+    <string name="swap_to_sub_goals">View Sub Goal Details</string>
+    <string name="swap_to_goal_details">View Goal Details</string>
     <string name="edit_goal">Edit Goal</string>
     <string name="finish_goal">Finish Goal</string>
     <string name="delete_goal">Delete Goal</string>
+    <string name="jump_to_future_goals">Jump to Future Goals</string>
     <string name="logout">Logout</string>
 
     <!-- Strings related to intent extras -->

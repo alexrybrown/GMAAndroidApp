@@ -11,7 +11,9 @@ import android.media.session.PlaybackState;
 import android.text.BoringLayout;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 /**
  * Database tool for the phone's database
@@ -292,7 +294,8 @@ public class DBTools extends SQLiteOpenHelper {
         SQLiteDatabase database = this.getReadableDatabase();
         // Get the goal from the database
         Cursor cursor = database.query(GOAL_TABLE, null,
-                GOAL_COLUMN_FUTURE_ID + "=" + goalID + " AND " + GOAL_COLUMN_ARCHIVED + "=0",
+                GOAL_COLUMN_FUTURE_ID + "=" + goalID + " AND " + GOAL_COLUMN_ARCHIVED + "=0"
+                        + " AND " + GOAL_COLUMN_FINISHED_AT + " IS NULL",
                 null, null, null, null, null);
         try {
             return cursor.getCount() > 0;
@@ -379,5 +382,20 @@ public class DBTools extends SQLiteOpenHelper {
                 dbTools.archiveGoalHelper(sub_sub_goal, dbTools);
             }
         }
+    }
+
+    /**
+     * Completes the goal given goal id
+     * @param goalID goalID for goal
+     * @throws SQLiteConstraintException
+     */
+    public void completeGoal(int goalID, DBTools dbTools) {
+        // Archive goal
+        Goal goal = getGoal(goalID);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        java.sql.Date sqlDate = new java.sql.Date(calendar.getTime().getTime());
+        goal.finishedAt = sqlDate.toString();
+        dbTools.createOrUpdateGoal(goal);
     }
 }
