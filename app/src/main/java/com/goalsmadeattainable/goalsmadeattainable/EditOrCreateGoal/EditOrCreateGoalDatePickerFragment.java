@@ -1,4 +1,4 @@
-package com.goalsmadeattainable.goalsmadeattainable.CreateGoal;
+package com.goalsmadeattainable.goalsmadeattainable.EditOrCreateGoal;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

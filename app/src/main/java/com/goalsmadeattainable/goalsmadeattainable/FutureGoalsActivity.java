@@ -13,7 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.goalsmadeattainable.goalsmadeattainable.CreateGoal.EditOrCreateGoalActivity;
+import com.goalsmadeattainable.goalsmadeattainable.EditOrCreateGoal.EditOrCreateGoalActivity;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.goalsmadeattainable.goalsmadeattainable.CreateGoal;
+package com.goalsmadeattainable.goalsmadeattainable.EditOrCreateGoal;
 
 import android.app.TimePickerDialog;
 import android.app.Dialog;

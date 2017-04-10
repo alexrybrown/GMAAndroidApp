@@ -1,4 +1,4 @@
-package com.goalsmadeattainable.goalsmadeattainable.CreateGoal;
+package com.goalsmadeattainable.goalsmadeattainable.EditOrCreateGoal;
 
 import android.app.Activity;
 import android.app.AlertDialog;

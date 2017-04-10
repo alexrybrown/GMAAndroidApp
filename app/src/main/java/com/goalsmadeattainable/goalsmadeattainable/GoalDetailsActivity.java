@@ -17,7 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.goalsmadeattainable.goalsmadeattainable.CreateGoal.EditOrCreateGoalActivity;
+import com.goalsmadeattainable.goalsmadeattainable.EditOrCreateGoal.EditOrCreateGoalActivity;
 
 import java.util.ArrayList;
 
@@ -28,7 +28,6 @@ import utils.handlers.GoalArchiveHandler;
 import utils.handlers.GoalCompleteHandler;
 import utils.handlers.GoalDetailsHandler;
 import utils.handlers.GoalsHandler;
-import utils.handlers.HttpHandler;
 
 public class GoalDetailsActivity extends AppCompatActivity {
     private int goalID;

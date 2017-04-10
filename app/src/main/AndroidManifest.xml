@@ -21,9 +21,8 @@
         </activity>
         <activity android:name=".RegisterActivity" />
         <activity android:name=".FutureGoalsActivity" />
-        <activity android:name=".CreateGoal.EditOrCreateGoalActivity" />
+        <activity android:name=".EditOrCreateGoal.EditOrCreateGoalActivity" />
         <activity android:name=".GoalDetailsActivity" />
-        <activity android:name=".EditGoal.EditGoalActivity"></activity>
     </application>
 
 </manifest>
