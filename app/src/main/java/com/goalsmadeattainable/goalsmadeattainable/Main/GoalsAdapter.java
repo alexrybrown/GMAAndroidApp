@@ -1,5 +1,6 @@
-package com.goalsmadeattainable.goalsmadeattainable;
+package com.goalsmadeattainable.goalsmadeattainable.Main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.goalsmadeattainable.goalsmadeattainable.GoalDetailsActivity;
+import com.goalsmadeattainable.goalsmadeattainable.R;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -19,6 +23,7 @@ import utils.Goal;
 
 public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHolder> {
     private ArrayList<Goal> goals;
+    private int fragmentNumber;
 
     // Provide a reference to the views for each data item
     public static class GoalsViewHolder extends RecyclerView.ViewHolder {
@@ -28,14 +33,18 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         TextView goalComment;
         TextView goalExpectedCompletion;
         Goal goal;
+        Context context;
+        int fragmentNumber;
 
-        public GoalsViewHolder(View itemView) {
+        public GoalsViewHolder(View itemView, int fragmentNumber) {
             super(itemView);
             goalsCV = (CardView) itemView.findViewById(R.id.goals_cv);
             goalTitle = (TextView) itemView.findViewById(R.id.goal_title);
             goalDescription = (TextView) itemView.findViewById(R.id.goal_description);
             goalComment = (TextView) itemView.findViewById(R.id.goal_comment);
             goalExpectedCompletion = (TextView) itemView.findViewById(R.id.goal_expected_completion);
+            context = itemView.getContext();
+            this.fragmentNumber = fragmentNumber;
             // Set the on click listener
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -49,13 +58,25 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         private void forwardToGoalDetails(View v) {
             Intent intent = new Intent(v.getContext(), GoalDetailsActivity.class);
             intent.putExtra(v.getContext().getString(R.string.goal_id), goal.goalID);
+            intent.putExtra(v.getContext().getString(R.string.fragment_number), fragmentNumber);
             v.getContext().startActivity(intent);
         }
     }
 
     // Constructor with array list of our goals
-    public GoalsAdapter(ArrayList<Goal> goals) {
+    public GoalsAdapter(ArrayList<Goal> goals, int fragmentNumber) {
         this.goals = goals;
+        this.fragmentNumber = fragmentNumber;
+    }
+
+    // Get the goals
+    public ArrayList<Goal> getGoals() {
+        return goals;
+    }
+
+    // Get the fragment number of this adapter
+    public int getFragmentNumber() {
+        return fragmentNumber;
     }
 
     // Create new views (invoked by the layout manager)
@@ -63,7 +84,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
     public GoalsViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.goals_cards,
                 parent, false);
-        return new GoalsViewHolder(v);
+        return new GoalsViewHolder(v, fragmentNumber);
     }
 
     // Replace the contents of a view (invoked by the layout manager)

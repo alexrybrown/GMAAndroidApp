@@ -20,9 +20,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".FutureGoalsActivity" />
-        <activity android:name=".EditOrCreateGoal.EditOrCreateGoalActivity" />
         <activity android:name=".GoalDetailsActivity" />
+        <activity android:name=".EditOrCreateGoal.EditOrCreateGoalActivity" />
+        <activity android:name=".Main.MainActivity" />
     </application>
 
 </manifest>

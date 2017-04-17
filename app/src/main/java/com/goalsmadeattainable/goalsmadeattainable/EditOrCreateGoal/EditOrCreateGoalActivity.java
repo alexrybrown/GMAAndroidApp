@@ -17,8 +17,8 @@ import android.widget.RelativeLayout;
 
 import com.goalsmadeattainable.goalsmadeattainable.GoalDetailsActivity;
 import com.goalsmadeattainable.goalsmadeattainable.LoginActivity;
+import com.goalsmadeattainable.goalsmadeattainable.Main.MainActivity;
 import com.goalsmadeattainable.goalsmadeattainable.R;
-import com.goalsmadeattainable.goalsmadeattainable.FutureGoalsActivity;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -278,7 +278,7 @@ public class EditOrCreateGoalActivity extends AppCompatActivity {
                 handler.execute((Void) null);
             }
             else {
-                intent = new Intent(this, FutureGoalsActivity.class);
+                intent = new Intent(this, MainActivity.class);
                 gmaUrlConnection = new GMAUrlConnection(
                         getString(R.string.goals_url), GMAUrlConnection.Method.POST,
                         params, this, dbTools.getToken());
@@ -304,7 +304,7 @@ public class EditOrCreateGoalActivity extends AppCompatActivity {
             intent.putExtra(getString(R.string.goal_id), getIntent().getIntExtra(getString(R.string.edit_goal_id), 0));
         }
         else {
-            intent = new Intent(this, FutureGoalsActivity.class);
+            intent = new Intent(this, MainActivity.class);
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

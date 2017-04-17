@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.goalsmadeattainable.goalsmadeattainable.GoalDetailsActivity;
-import com.goalsmadeattainable.goalsmadeattainable.GoalsAdapter;
+import com.goalsmadeattainable.goalsmadeattainable.Main.GoalsAdapter;
 import com.goalsmadeattainable.goalsmadeattainable.R;
 
 import org.json.JSONArray;
@@ -28,16 +30,19 @@ public class GoalsHandler extends HttpHandler {
     private RecyclerView.Adapter goalsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private GoalDetailsActivity goalDetailsActivity;
+    private TextView emptyView;
 
     public GoalsHandler(String success, String failure, Intent intent,
                         GMAUrlConnection gmaUrlConnection,
                         RecyclerView goalsRecyclerView, RecyclerView.Adapter goalsAdapter,
-                        SwipeRefreshLayout swipeRefreshLayout, GoalDetailsActivity goalDetailsActivity) {
+                        SwipeRefreshLayout swipeRefreshLayout, GoalDetailsActivity goalDetailsActivity,
+                        TextView emptyView) {
         super(success, failure, intent, gmaUrlConnection);
         this.goalsRecyclerView = goalsRecyclerView;
         this.goalsAdapter = goalsAdapter;
         this.swipeRefreshLayout = swipeRefreshLayout;
         this.goalDetailsActivity = goalDetailsActivity;
+        this.emptyView = emptyView;
     }
 
     protected void onPreExecute() {}
@@ -103,13 +108,22 @@ public class GoalsHandler extends HttpHandler {
                 final Activity activity = (Activity) gmaUrlConnection.getContext();
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        goalsAdapter = new GoalsAdapter(goals);
+                        int fragmentNumber = ((GoalsAdapter) goalsAdapter).getFragmentNumber();
+                        goalsAdapter = new GoalsAdapter(goals, fragmentNumber);
                         goalsRecyclerView.removeAllViews();
                         goalsRecyclerView.setAdapter(goalsAdapter);
                         goalsAdapter.notifyDataSetChanged();
                         if (goalDetailsActivity != null) {
                             if (goals.size() > 0) {
                                 goalDetailsActivity.viewSubGoals();
+                            }
+                        } else {
+                            if (emptyView != null && goals.isEmpty()) {
+                                goalsRecyclerView.setVisibility(View.GONE);
+                                emptyView.setVisibility(View.VISIBLE);
+                            } else if (emptyView != null) {
+                                goalsRecyclerView.setVisibility(View.VISIBLE);
+                                emptyView.setVisibility(View.GONE);
                             }
                         }
                     }

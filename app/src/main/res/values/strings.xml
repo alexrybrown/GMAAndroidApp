@@ -74,6 +74,8 @@
     <string name="goal_archived">archived</string>
     <string name="goals_url">goals/</string>
     <string name="future_goals_url">goals/future-goals/</string>
+    <string name="upcoming_goals_url">goals/upcoming-goals/</string>
+    <string name="overdue_goals_url">goals/overdue-goals/</string>
     <string name="sub_goals_url">sub-goals/</string>
     <string name="archive_goal_url">archive/</string>
     <string name="complete_goal_url">complete/</string>
@@ -96,10 +98,19 @@
     <string name="edit_goal">Edit Goal</string>
     <string name="finish_goal">Finish Goal</string>
     <string name="delete_goal">Delete Goal</string>
-    <string name="jump_to_future_goals">Jump to Future Goals</string>
+    <string name="jump_to_home">Jump to Home</string>
     <string name="logout">Logout</string>
 
     <!-- Strings related to intent extras -->
     <string name="future_goal_id">future_goal_id</string>
     <string name="edit_goal_id">edit_goal_id</string>
+    <string name="fragment_number">fragment_number</string>
+
+    <!-- Empty fragments -->
+    <string name="no_data_future_goals">No future goals</string>
+    <string name="no_data_upcoming_goals">No upcoming goals</string>
+    <string name="no_data_overdue_goals">No overdue goals</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

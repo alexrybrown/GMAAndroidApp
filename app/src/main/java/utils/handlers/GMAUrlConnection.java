@@ -124,15 +124,15 @@ public class GMAUrlConnection {
 
     private String getRootUrl(Context context) {
         String rootUrl;
-        try {
-            // Get local url when developing
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader(context.getResources().getAssets().open("url.txt")));
-            rootUrl = br.readLine();
-        } catch (Exception e) {
+//        try {
+//            // Get local url when developing
+//            BufferedReader br = new BufferedReader(
+//                    new InputStreamReader(context.getResources().getAssets().open("url.txt")));
+//            rootUrl = br.readLine();
+//        } catch (Exception e) {
             // Get production url on server
             rootUrl = "https://arcane-fjord-64904.herokuapp.com/";
-        }
+//        }
         return rootUrl;
     }
 }

@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
+import com.goalsmadeattainable.goalsmadeattainable.Main.MainActivity;
+
 import java.util.HashMap;
 
 import utils.DBTools;
@@ -38,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         DBTools dbTools = new DBTools(this);
         if (dbTools.checkActiveUserExists()) {
             dbTools.close();
-            Intent intent = new Intent(this, FutureGoalsActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
         }
@@ -111,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
             HashMap<String, String> params = new HashMap<>();
             params.put(getString(R.string.username), username);
             params.put(getString(R.string.password), password);
-            Intent intent = new Intent(this, FutureGoalsActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
                     getString(R.string.login_url), GMAUrlConnection.Method.POST,

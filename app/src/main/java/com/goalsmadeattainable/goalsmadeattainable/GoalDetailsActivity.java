@@ -1,6 +1,5 @@
 package com.goalsmadeattainable.goalsmadeattainable;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,8 +7,8 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +17,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.goalsmadeattainable.goalsmadeattainable.EditOrCreateGoal.EditOrCreateGoalActivity;
+import com.goalsmadeattainable.goalsmadeattainable.Main.GoalsAdapter;
+import com.goalsmadeattainable.goalsmadeattainable.Main.MainActivity;
 
 import java.util.ArrayList;
 
@@ -31,6 +32,7 @@ import utils.handlers.GoalsHandler;
 
 public class GoalDetailsActivity extends AppCompatActivity {
     private int goalID;
+    private int fragmentNumber;
     private CoordinatorLayout rootLayout;
     private Toolbar toolbar;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -45,8 +47,9 @@ public class GoalDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goal_details);
-
-        goalID = getIntent().getIntExtra(getString(R.string.goal_id), 0);
+        
+        goalID = getIntent().getExtras().getInt(getString(R.string.goal_id));
+        fragmentNumber = getIntent().getExtras().getInt(getString(R.string.fragment_number));
         initializeWidgets();
         initializeListeners();
     }
@@ -82,7 +85,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
         goalDetailsRecyclerView.setLayoutManager(goalDetailsLayoutManager);
 
         // specify an adapter
-        goalDetailsAdapter = new GoalsAdapter(new ArrayList<Goal>());
+        goalDetailsAdapter = new GoalsAdapter(new ArrayList<Goal>(), fragmentNumber);
         goalDetailsRecyclerView.setAdapter(goalDetailsAdapter);
 
         // initialize goal data
@@ -130,7 +133,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
         GoalsHandler handler = new GoalsHandler(
                 "", getString(R.string.failed_goal_retrieval),
                 null, gmaUrlConnection, goalDetailsRecyclerView, goalDetailsAdapter,
-                swipeRefreshLayout, this);
+                swipeRefreshLayout, this, null);
         handler.execute((Void) null);
     }
 
@@ -159,8 +162,8 @@ public class GoalDetailsActivity extends AppCompatActivity {
                     case R.id.delete_goal:
                         confirmArchiveGoal();
                         break;
-                    case R.id.jump_to_future_goals:
-                        jumpToFutureGoals();
+                    case R.id.jump_to_home:
+                        jumpToHome();
                         break;
                     case R.id.logout:
                         logout();
@@ -190,8 +193,8 @@ public class GoalDetailsActivity extends AppCompatActivity {
                     case R.id.delete_goal:
                         confirmArchiveGoal();
                         break;
-                    case R.id.jump_to_future_goals:
-                        jumpToFutureGoals();
+                    case R.id.jump_to_home:
+                        jumpToHome();
                         break;
                     case R.id.logout:
                         logout();
@@ -221,8 +224,8 @@ public class GoalDetailsActivity extends AppCompatActivity {
                     case R.id.delete_goal:
                         confirmArchiveGoal();
                         break;
-                    case R.id.jump_to_future_goals:
-                        jumpToFutureGoals();
+                    case R.id.jump_to_home:
+                        jumpToHome();
                         break;
                     case R.id.logout:
                         logout();
@@ -301,14 +304,15 @@ public class GoalDetailsActivity extends AppCompatActivity {
         Goal goal = dbTools.getGoal(this.goalID);
         // Setup redirect to different activity
         Intent intent;
-        // Check and see if our goal we archived had a future goal
-        if (goal.futureGoalID != null) {
+        // Check and see if our goal we archived had a future goal and they came from the future goal tab
+        if (goal.futureGoalID != null && fragmentNumber == 0) {
             dbTools = new DBTools(this);
             Goal futureGoal = dbTools.getGoal(goal.futureGoalID);
             intent = new Intent(this, GoalDetailsActivity.class);
             intent.putExtra(getString(R.string.goal_id), futureGoal.goalID);
-        } else { // Redirect them to the future goals activity
-            intent = new Intent(this, FutureGoalsActivity.class);
+        } else { // Redirect them to the main activity
+            intent = new Intent(this, MainActivity.class);
+            intent.putExtra(getString(R.string.fragment_number), fragmentNumber);
         }
         dbTools.close();
         // Clear the stack and remove this activity from the stack
@@ -328,14 +332,15 @@ public class GoalDetailsActivity extends AppCompatActivity {
         Goal goal = dbTools.getGoal(this.goalID);
         // Setup redirect to different activity
         Intent intent;
-        // Check and see if our goal we completed had a future goal
-        if (goal.futureGoalID != null) {
+        // Check and see if our goal we completed had a future goal and they came from the future goal tab
+        if (goal.futureGoalID != null && fragmentNumber == 0) {
             dbTools = new DBTools(this);
             Goal futureGoal = dbTools.getGoal(goal.futureGoalID);
             intent = new Intent(this, GoalDetailsActivity.class);
             intent.putExtra(getString(R.string.goal_id), futureGoal.goalID);
-        } else { // Redirect them to the future goals activity
-            intent = new Intent(this, FutureGoalsActivity.class);
+        } else { // Redirect them to the main activity
+            intent = new Intent(this, MainActivity.class);
+            intent.putExtra(getString(R.string.fragment_number), fragmentNumber);
         }
         dbTools.close();
         // Clear the stack and remove this activity from the stack
@@ -349,19 +354,18 @@ public class GoalDetailsActivity extends AppCompatActivity {
         handler.execute((Void) null);
     }
 
-    // Jump to future goal screen
-    private void jumpToFutureGoals() {
-        Intent intent = new Intent(this, FutureGoalsActivity.class);
+    // Jump to main activity screen
+    private void jumpToHome() {
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
     // Remove active users from the database and redirect to login page
     private void logout() {
-        Activity activity = (Activity) rootLayout.getContext();
-        DBTools dbTools = new DBTools(rootLayout.getContext());
+        DBTools dbTools = new DBTools(this);
         dbTools.removeActiveUsers();
         dbTools.close();
-        Intent intent = new Intent(activity, LoginActivity.class);
-        activity.startActivity(intent);
+        Intent intent = new Intent(this, LoginActivity.class);
+        this.startActivity(intent);
     }
 }

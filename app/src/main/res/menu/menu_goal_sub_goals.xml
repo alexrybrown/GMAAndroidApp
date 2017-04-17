@@ -18,9 +18,9 @@
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/jump_to_future_goals"
+        android:id="@+id/jump_to_home"
         android:orderInCategory="3"
-        android:title="@string/jump_to_future_goals"
+        android:title="@string/jump_to_home"
         app:showAsAction="never"/>
 
     <item
