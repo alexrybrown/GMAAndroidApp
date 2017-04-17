@@ -357,6 +357,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
     // Jump to main activity screen
     private void jumpToHome() {
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(getString(R.string.fragment_number), fragmentNumber);
         startActivity(intent);
     }
 

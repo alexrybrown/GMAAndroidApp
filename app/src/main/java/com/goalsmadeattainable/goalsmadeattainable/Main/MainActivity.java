@@ -17,8 +17,6 @@ import com.goalsmadeattainable.goalsmadeattainable.LoginActivity;
 import com.goalsmadeattainable.goalsmadeattainable.R;
 
 import utils.DBTools;
-import utils.handlers.GMAUrlConnection;
-import utils.handlers.GoalsHandler;
 
 public class MainActivity extends AppCompatActivity {
     private CoordinatorLayout rootLayout;
@@ -59,6 +57,17 @@ public class MainActivity extends AppCompatActivity {
         // If we have a fragment number set the tab to start at
         if (getIntent().getIntExtra(getString(R.string.fragment_number), -1) != -1) {
             viewPager.setCurrentItem(getIntent().getExtras().getInt(getString(R.string.fragment_number)));
+            switch (getIntent().getExtras().getInt(getString(R.string.fragment_number))) {
+                case 0:
+                    fab.setVisibility(View.VISIBLE);
+                    break;
+                case 1:
+                    fab.setVisibility(View.GONE);
+                    break;
+                case 2:
+                    fab.setVisibility(View.GONE);
+                    break;
+            }
         }
     }
 
@@ -112,7 +121,19 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
+                viewPager.setCurrentItem(tab.getPosition());
+                tabLayout.setScrollPosition(tab.getPosition(), 0f, true);
+                switch (tab.getPosition()) {
+                    case 0:
+                        fab.setVisibility(View.VISIBLE);
+                        break;
+                    case 1:
+                        fab.setVisibility(View.GONE);
+                        break;
+                    case 2:
+                        fab.setVisibility(View.GONE);
+                        break;
+                }
             }
         });
     }
