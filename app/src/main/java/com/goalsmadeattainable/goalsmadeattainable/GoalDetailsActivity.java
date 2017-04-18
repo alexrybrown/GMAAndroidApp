@@ -54,6 +54,14 @@ public class GoalDetailsActivity extends AppCompatActivity {
         initializeListeners();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // initialize goal data
+        getGoalDetails();
+        getSubGoals();
+    }
+
     private void initializeWidgets() {
         rootLayout = (CoordinatorLayout) findViewById(R.id.activity_goal_details);
 

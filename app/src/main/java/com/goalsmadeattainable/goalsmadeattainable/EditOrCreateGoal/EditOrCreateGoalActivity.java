@@ -276,8 +276,7 @@ public class EditOrCreateGoalActivity extends AppCompatActivity {
                         intent, gmaUrlConnection, getIntent().getIntExtra(getString(R.string.edit_goal_id), 0));
                 this.finish();
                 handler.execute((Void) null);
-            }
-            else {
+            } else {
                 intent = new Intent(this, MainActivity.class);
                 gmaUrlConnection = new GMAUrlConnection(
                         getString(R.string.goals_url), GMAUrlConnection.Method.POST,

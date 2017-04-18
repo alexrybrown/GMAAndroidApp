@@ -32,12 +32,12 @@ public class HttpHandler extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        progressDialog = new ProgressDialog(gmaUrlConnection.getContext());
-        progressDialog.setCancelable(true);
-        progressDialog.setMessage("Loading...");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setProgress(0);
-        progressDialog.show();
+//        progressDialog = new ProgressDialog(gmaUrlConnection.getContext());
+//        progressDialog.setCancelable(true);
+//        progressDialog.setMessage("Loading...");
+//        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//        progressDialog.setProgress(0);
+//        progressDialog.show();
     }
 
     // Starts the communication process with the server
@@ -63,7 +63,7 @@ public class HttpHandler extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        clearProgressDialog();
+//        clearProgressDialog();
         if (!result.isEmpty()) {
             Toast.makeText(gmaUrlConnection.getContext(), result, Toast.LENGTH_SHORT).show();
         }
@@ -89,7 +89,9 @@ public class HttpHandler extends AsyncTask<Void, Void, String> {
     }
 
     protected void clearProgressDialog() {
-        progressDialog.dismiss();
-        progressDialog = null;
+        if ((progressDialog != null) && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
     }
 }

@@ -18,7 +18,6 @@ public class GoalPutPostHandler extends HttpHandler {
 
     @Override
     protected void onPostExecute(String result) {
-        progressDialog.dismiss();
         Context context = gmaUrlConnection.getContext();
         DBTools dbTools = new DBTools(context);
         GMAUrlConnection gmaUrlConnection = new GMAUrlConnection(
@@ -28,6 +27,7 @@ public class GoalPutPostHandler extends HttpHandler {
         GoalDetailsHandler handler = new GoalDetailsHandler(
                 "", context.getString(R.string.failed_goal_details_retrieval),
                 this.intent, gmaUrlConnection, null, null, null, null);
+//        clearProgressDialog();
         handler.execute((Void) null);
     }
 }
