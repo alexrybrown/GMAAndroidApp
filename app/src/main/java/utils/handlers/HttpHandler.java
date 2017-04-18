@@ -57,7 +57,7 @@ public class HttpHandler extends AsyncTask<Void, Void, String> {
             return this.handleResponse(conn);
         } catch (IOException e) {
             e.printStackTrace();
-            return "Critical Failure";
+            return "Server Timeout";
         }
     }
 
